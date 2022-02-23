@@ -1,0 +1,52 @@
+﻿
+Provision:
+	830 - default_action
+	831 - default_log_action
+	832 - review:accepted
+	833 - review:rejected
+	834 - review:confirm
+	835 - review:confirmation
+	836 - Actions with Order Params
+	837 - Actions with Order Items
+	838 - Actions with Order Payments
+	839 - Actions with Order Comments
+	840 - Update status of order in LINE area (review status)
+	841 - Refresh content for Edit action
+	842 - Change status of Order
+	843 - Refresh content for Create/Update/Clone an Order or Decree
+	844 - Send request for approval
+	845 - Validate and Create/Update/Clone an Order or Decree if not errors
+	846 - review:paid
+	847 - Actions with Order Documents
+	848 - Set unread
+	849 - Set read
+	850 - default_print_action
+	851 - Send review notifications
+	852 - Send the Order's review notifications
+	853 - Order Changes History data
+	854 - review:delivered
+	855 - Refresh Order items in the edit form
+	856 - Actions with Order Refers
+	857 - review:decree
+	858 - review:failure
+	859 - review:validated
+	860 - Render Reviewer profile
+	861 - Reference service maintainance
+	862 - Update StockList link in the Order and return main view Tab
+	863 - Update Schedule list
+	864 - Delete an Order (instead of Index:Delete)
+	865 - Update StockList link in the group of Order and return main view Tab
+	866 - Activate Checked Reviewers dialog
+	867 - Update param combo values
+	868 - Generate provision barcode
+	869 - Render provision barcode
+	870 - 
+	871 - Actions with Seller/Stock/Payments Review
+	872 - Actions with Seller/Stock/Payments Review
+	873 - Actions with Seller/Stock/Payments Review
+	874 - Actions with Seller/Stock/Payments Review
+	875 - Actions with Decrees
+	876 - 
+	877 - 
+	878 - 
+	879 -     

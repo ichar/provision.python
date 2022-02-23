@@ -1,0 +1,125 @@
+# ---------
+# PROVISION
+# ---------
+
+# Принудительная загрузка данных генератора
+IsLoaderExplicit         :: 0
+# Включить согласование руководителями компании (ИД, ЗГД)
+IsReviewHeadOffice       :: 1
+# Включить рассылку уведомлений ГД
+IsReviewRoot             :: 1
+# Включить рассылку на публичные адреса
+IsPublicEmailEnabled     :: 1
+# Выборка данных для назначенных рецензентов
+IsWithReviewersTemplate  :: 1
+# Выборка данных без ограничений размера страницы
+IsMaxPerPage             :: 0
+# Использовать OFFSET в SQL запросах
+IsApplyOffset            :: 1
+# Использовать UNION в SQL запросах
+IsApplyUnion             :: 1
+# Включить орг-штатную структуру в запросах
+IsUseCompanySubdivisions :: 1
+# Контроль минимальных размеров полей
+IsCheckLimitedLength     :: 1
+# Использовать аватары в рецензиях
+IsUseReviewerAvatar      :: 1
+# Принудительная загрузка статических файлов
+IsForceRefresh           :: 1
+# Трассировка по контрольным точкам
+IsWithPoints             :: 0
+# Отслеживать параметры агента пользователя
+IsLogAgent               :: 1
+# Использовать CROSS-курс валют в расчетах
+IsCross                  :: 0
+# Расшифровать расчет совокупной цены
+IsCheckRefers            :: 0
+# Выполнять загрузку курсов валют
+IsLoadExchangeRate       :: 1
+# Использовать вертикальный скроллер (0|1-да|нет, N-кол-во записей)
+IsActiveScroller         :: 5
+# Административное руководство (делегирование)
+WORKFLOW_OFFICE_GROUP    :: aybazov|anton|sales
+# Активировать модуль согласования документов
+IsApplyDocumentsSchedule :: 1
+# Активировать модуль контроля поручений
+IsApplyDecreesSchedule   :: 0
+#
+# ---------
+#
+MAX_CARDHOLDER_ITEMS     :: 9999
+# Стартовый каталог ExtPerso
+EXTPERSO_STARTER_FOLDER  :: /storage/projects/extperso
+#
+# ---------
+#
+DEFAULT_EMAILS_PROVISION_APPROVAL  :: import@rosan.ru|
+DEFAULT_EMAILS_PROVISION_CREATE    :: snab1c@rosan.ru|import@rosan.ru|snab3@rosan.ru
+DEFAULT_EMAILS_PROVISION_REMOVE    :: snab1c@rosan.ru|import@rosan.ru|snab3@rosan.ru
+DEFAULT_EMAILS_PROVISION_REVIEW    :: snab1c@rosan.ru|import@rosan.ru|snab3@rosan.ru
+DEFAULT_EMAILS_PROVISION_EXECUTE   :: snab1c@rosan.ru|import@rosan.ru|snab3@rosan.ru|bank@rosan.ru|cmv@rosan.ru|rosan@mazars.ru
+DEFAULT_EMAILS_PROVISION_PAYMENTS  :: bank@rosan.ru|cmv@rosan.ru|yakovitskiy@rosan.ru
+DEFAULT_EMAILS_PROVISION_AUDIT     :: rosan@mazars.ru;vera.artemenkova@mazars.ru|yakovitskiy@rosan.ru|bank@rosan.ru
+DEFAULT_EMAILS_PROVISION_DECREE    :: secretary@rosan.ru|yakovitskiy@rosan.ru
+DEFAULT_EMAILS_PROVISION_UPLOAD    :: rosan@mazars.ru;vera.artemenkova@mazars.ru|yakovitskiy@rosan.ru|bank@rosan.ru
+#
+DEFAULT_EMAILS_WORKFLOW_APPROVAL   :: secretary@rosan.ru|
+DEFAULT_EMAILS_WORKFLOW_CREATE     :: secretary@rosan.ru|
+DEFAULT_EMAILS_WORKFLOW_REMOVE     :: secretary@rosan.ru|
+DEFAULT_EMAILS_WORKFLOW_REVIEW     :: secretary@rosan.ru|
+DEFAULT_EMAILS_WORKFLOW_EXECUTE    :: secretary@rosan.ru|
+DEFAULT_EMAILS_WORKFLOW_PAYMENTS   :: bank@rosan.ru|cmv@rosan.ru|yakovitskiy@rosan.ru|webdev@rosan.ru
+DEFAULT_EMAILS_WORKFLOW_AUDIT      :: 
+DEFAULT_EMAILS_WORKFLOW_DECREE     :: secretary@rosan.ru|yakovitskiy@rosan.ru
+DEFAULT_EMAILS_WORKFLOW_UPLOAD     :: 
+#
+DEFAULT_EMAILS_SALE_APPROVAL       :: sales@rosan.ru|
+DEFAULT_EMAILS_SALE_CREATE         :: sales@rosan.ru|
+DEFAULT_EMAILS_SALE_REMOVE         :: sales@rosan.ru|
+DEFAULT_EMAILS_SALE_REVIEW         :: sales@rosan.ru|
+DEFAULT_EMAILS_SALE_EXECUTE        :: sales@rosan.ru|
+DEFAULT_EMAILS_SALE_PAYMENTS       :: bank@rosan.ru|cmv@rosan.ru|yakovitskiy@rosan.ru
+DEFAULT_EMAILS_SALE_AUDIT          :: 
+DEFAULT_EMAILS_SALE_DECREE         :: sales@rosan.ru|secretary@rosan.ru|yakovitskiy@rosan.ru
+DEFAULT_EMAILS_SALE_UPLOAD         :: sales@rosan.ru|
+#
+DEFAULT_EMAILS_PURCHASE_APPROVAL   :: sales@rosan.ru|
+DEFAULT_EMAILS_PURCHASE_CREATE     :: sales@rosan.ru|
+DEFAULT_EMAILS_PURCHASE_REMOVE     :: sales@rosan.ru|
+DEFAULT_EMAILS_PURCHASE_REVIEW     :: sales@rosan.ru|
+DEFAULT_EMAILS_PURCHASE_EXECUTE    :: sales@rosan.ru|
+DEFAULT_EMAILS_PURCHASE_PAYMENTS   :: bank@rosan.ru|cmv@rosan.ru|yakovitskiy@rosan.ru
+DEFAULT_EMAILS_PURCHASE_AUDIT      :: 
+DEFAULT_EMAILS_PURCHASE_DECREE     :: sales@rosan.ru|secretary@rosan.ru|yakovitskiy@rosan.ru
+DEFAULT_EMAILS_PURCHASE_UPLOAD     :: sales@rosan.ru|
+#
+DEFAULT_EMAILS_COMMON    :: anton@rosan.ru|webdev@rosan.ru
+DEFAULT_EMAILS_PUBLIC    :: olegaybazov@rosan.ru|rosan@mazars.ru;vera.artemenkova@mazars.ru
+#
+EXCLUDE_EMAILS           :: olegaybazov@rosan.ru|
+# Emails sending addr_to list size limit
+EMAILS_ADDR_TO_LIMIT     :: 50
+# Emails sending timeout
+EMAILS_TIMEOUT           :: 3
+#
+PROVISION_LINK           :: %sprovision|?sidebar=0
+#
+LIMITED_LENGTH_EXCLUDE   :: *|admin|stock|aybazov|anton
+#
+USE_REVIEWER_AVATAR      :: *|admin|demo|aybazov|anton|indigo|sales|chuplin|lazutinao|stock|diamond|transport|anna|secretary|tsergey|personal|avance|mlogin|asharov|boikoov|skladdiamond|helpdesk
+#
+ENABLED_ORDER_ITEMS      :: url|sector|category
+#
+QUALIFIED_DOCUMENTS      :: %
+#
+DEFAULT_CREATED_AFTER    :: 2021-01-01
+# Type of Filder view for Stocks: tree>[symb]|view|default
+STOCKS_VIEW_TYPE         :: tree>
+# Min provision stock class level
+PROVISION_STOCKS_DEPTH   :: 2
+# Включить контроль кодов 1С в параметрах заявки (длина кода не менее)
+PROVISION_CHECK_1C       :: 11
+# Show Seller orders info
+SHOW_SELLER_INFO         :: *|admin|polina|snab1c|anton|borovin|sergio|yakovitskiy|stock|snab3|borisov|avance|perelygina|cmv01|ildyulia
+# Маршруты согласования
+PROVISION_STOCK_ROUTES   :: 0004:bulavin|0010.0000:chuplin|0001.0008.0001:sales|*:ildemenovas
