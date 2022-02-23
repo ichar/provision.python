@@ -1,0 +1,50 @@
+
+/*** CARDS ***/
+
+body { overflow-y:inherit; }
+
+#page-container > .cards { display:flex; margin-right:6px; }
+
+div.cards .view-container { width:100%; }
+
+#line-table { width:100%; }
+
+#MAINDATA { padding:10px; }
+
+/*** Cards Filter Items  ***/
+
+div.cards-filter #client              { min-width:190px; }
+div.cards-filter #filename            { width:398px; }
+div.cards-filter #status              { width:190px; }
+div.cards-filter #persstatus          { width:190px; }
+div.cards-filter #order-date-from     { width:176px; }
+div.cards-filter #order-date-to       { width:176px; }
+div.cards-filter #perstype            { width:190px; }
+div.cards-filter #pan                 { width:176px; }
+
+.cards { margin-right:10px; height:100%; }
+
+div.cards-container .log-status { white-space:nowrap; }
+
+div.cards-container .exdata div { display:inline-flex; }
+
+div.cards-container #buttons-box { 
+    border:0px solid #ccc; 
+    width:100%;
+    margin:30px;
+    text-align:left; 
+}
+div.cards-container button { margin:10px 0 10px 10px; }
+
+div.cards-selection { 
+    margin:0 -8px 0 5px;
+    border:1px solid #aaa;
+    border-radius:12px;
+    padding:10px;
+    height:100%;
+    width:125px;
+}
+
+.column { line-height:16px; }
+
+.log-statusdate { white-space:nowrap; }

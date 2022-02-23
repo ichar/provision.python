@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="{{ language }}">
+<head>
+<!-- {{ os }} *** {{ platform }} *** {{ agent }} *** {{ browser }} -->
+<meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+  {% if is_mobile and width %}
+<meta name="viewport" content="width={{ width }}">
+  {% else %}
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  {% endif %}
+<meta name="author" content="Rosan Finance = Igor Kharlamov (mkaro)">
+  {% if title %}
+<title>{{ title }}</title>
+  {% else %}
+<title>WebPerso Viewer Simple Page</title>
+  {% endif %}
+<link href="{{ url_for('static', filename='css/bootstrap.css') }}" rel="stylesheet" type="text/css" media="screen">
+<link href="{{ url_for('static', filename='css/bootstrap-responsive.min.css') }}" rel="stylesheet" type="text/css">
+<link href="{{ url_for('static', filename='css/jquery-ui.custom.css') }}" rel="stylesheet" type="text/css">
+<link href="{{ url_for('static', filename='css/style') }}.common.css{{ vsc }}" rel="stylesheet" type="text/css">
+<link href="{{ url_for('static', filename='css/style') }}.{{ module }}.css{{ vsc }}" rel="stylesheet" type="text/css">
+<link href="{{ url_for('static', filename='css/style') }}.{{ css }}.css{{ vsc }}" rel="stylesheet" type="text/css">
+  {%- if is_linux -%}
+<link href="{{ url_for('static', filename='css/style') }}.skins.web.css{{ vsc }}" rel="stylesheet" type="text/css">
+  {%- endif -%}
+  {%- if is_active_scroller -%}
+<link href="{{ url_for('static', filename='css/style') }}.scroller.css{{ vsc }}" rel="stylesheet" type="text/css">
+  {%- endif -%}
+
+{% block styles %}{% endblock %}
+
+<script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jquery-ui.custom.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jquery.color.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/verge.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/core.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/common.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/controls.min.js') }}{{ vsc }}"></script>
+{% block starter %}{% endblock %}
+<link rel="shortcut icon" href="{{ root }}static/img/favicon.png">
+</head>
+<body>
+
+<div id="html-container">
+
+{% block sidebar_content %}{% endblock %}
+
+<div id="dataFrame">
+
+{% if show_flash %}
+
+<section id="flash-section">
+  
+  {% for message in get_flashed_messages() %}
+
+    <div class="flash">{{ _(message) }}</div>
+
+  {% endfor %}
+  
+</section>
+
+{% endif %}
+
+<section id="header-section">
+
+  {% block header %}{% endblock %}
+
+</section>
+
+<section id="page-section">
+
+{% block page_content %}{% endblock %}
+
+</section>
+
+</div>
+
+</div>
+
+<div id="error-container" title="" style="display:none;">
+  <div id="error-info">
+    <h3 id="error-notification">ВНИМАНИЕ!</h3>
+    <p id="error-text"></p>
+    <div id="error-button"></div>
+  </div>
+</div>
+
+<div id="page-loader" style="display:none;">
+  <div>{{ _('Please, wait the system response') }}...</div>
+</div>
+
+<div class="common-dialog" id="help-container" title="{{ _('Help information') }}" style="display:none;">
+  <h3>{{ _('Helper keypress guide') }}:</h3>
+  <div class="common-box" id="help-info"></div>
+</div>
+
+<div class="common-dialog" id="confirm-container" title="{{ _('Confirm notification form') }}" style="display:none;">
+  <h3 id="confirm-notification">{{ _('Please, confirm') }}:</h3>
+  <div id="confirm-info"></div>
+</div>
+
+<div class="common-dialog" id="notification-container" title="{{ _('Notification form') }}" style="display:none;">
+  <div id="notification-info"></div>
+</div>
+
+<div id="dialog-cache"></div>
+
+{% block dialogs_content %}{% endblock %}
+
+<script type="text/javascript">
+<!--
+// Core definitions
+// ----------------
+$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+$IS_MOBILE = {{ is_mobile }};
+$IS_FRAME = {{ is_frame }};
+$IS_DEMO = {{ is_demo }};
+
+root = '{{ root }}';
+back = '{{ back }}';
+baseURI = '{{ root }}{{ base }}';
+loaderURI = '{{ loader|safe }}';
+keywords = { {{ keywords|join(', ')|safe }} };
+
+IsActiveScroller = {{ is_active_scroller }};
+IsShowLoader = {{ is_show_loader }};
+IsAdmin = {{ is_admin }};
+
+{% if pagination %}
+LOG_SORT = new Array({{ pagination['sort']['modes']|join(', ')|safe }});
+current_sort = {{ pagination['sort']['current_sort'] }};
+{% endif %}
+//-->
+</script> 
+
+{% block final_scripts %}{% endblock %}
+
+</body>
+</html>

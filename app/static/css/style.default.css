@@ -1,0 +1,15 @@
+
+div.page-header { width:480px; }
+
+#data_system_params td.name { background-color:#C898A2; color:white; } /*# 9A8888 */
+
+#data_user_params { max-width:545px; }
+#data_user_params td.name   { background-color:#A4A4C8; color:white; }
+/*
+#data_user_params td.value  { min-width:160px; }
+*/
+
+.sort_index { background-color:#68a; }
+.sort_index td { padding:10px 5px 10px 5px !important; }
+.sort_index td.name  { background-color:#68a !important; color:white; }
+.sort_index td.value { color:white; }

@@ -1,0 +1,448 @@
+﻿{% extends "common.html" %}
+
+{% import 'forms.html' as Forms %}
+
+{% block page_styles %}
+
+<link href="{{ url_for('static', filename='css/style') }}.bankperso.css{{ vsc }}" rel="stylesheet" type="text/css">
+<link href="{{ url_for('static', filename='css/pikaday/pikaday.css') }}" rel="stylesheet" type="text/css">
+
+{% endblock %}
+
+{% block starter %}
+
+<script src="{{ url_for('static', filename='js/db.controller.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/log.default.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/bankperso.dialogs.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/bankperso.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/reports.min.js') }}{{ vsc }}"></script>
+
+{% if current_user.is_any() %}
+<script src="{{ url_for('static', filename='js/bankperso.manager.min.js') }}{{ vsc }}"></script>
+{%- else -%}
+<script src="{{ url_for('static', filename='js/bankperso.default.min.js') }}{{ vsc }}"></script>
+{% endif %}
+
+<script src="{{ url_for('static', filename='js/pikaday.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/pikaday.jquery.min.js') }}"></script>
+
+{% endblock %}
+
+{% block data_section_content %}
+
+  <div class="bankperso inline-content">
+
+    {{ Forms.lines('orders', orders, config) }}
+
+  </div>
+
+{% endblock %}
+
+{% block info_section_content %}
+
+  <div class="data-menu block" id="tab-content">
+    <div class="menu selected" id="data-menu-batches">Партии</div>
+    <!-- Addon menu -->
+    <div class="menu" id="data-menu-logs">История заказа</div>
+    <div class="menu" id="data-menu-cardholders">Персонализация</div>
+    <div class="menu{% if 'indigo' not in tabs %} invisible{% endif %}" id="data-menu-indigo">Индиго</div>
+  {% if current_user.is_administrator() %}
+    <div class="menu" id="data-menu-body">IBODY</div>
+  {% endif %}
+    <div class="menu" id="data-menu-processerrmsg">PROCESS-ERR-MSG</div>
+    <div class="menu" id="data-menu-persolog">Файловый журнал</div>
+    <div class="menu" id="data-menu-sdclog">SDC</div>
+    <div class="menu" id="data-menu-exchangelog">Инфообмен</div>
+  </div>
+
+  <div class="bankperso-container" id="info-container">
+    <div class="view-content" id="subline-content">
+      <div class="cell p50"><div id="subline-data">
+        <h3>Партии файла <span class="filename" id="subline_name">{{ current_file[1] }}</span>:</h3>
+
+      {% if current_user.is_operator() %}
+        <div class="batches-tabs-content">
+          <div class="common-tab-head common-tab-head-top">
+            <ul id="batches-tabs">
+              <li class="{% if batches_tab=='all' %}selected{% endif %}"><a href="#MAINDATA" class="batches-tab" id="batches-tab-all">{{ _('All') }}</a></li>
+              <li class="{% if batches_tab=='active' %}selected{% endif %}" ><a href="#MAINDATA" class="batches-tab" id="batches-tab-active">{{ _('Active batches') }}</a></li>
+            </ul>
+          </div>
+
+          <div class="common-tab-data-top">
+      {% endif %}
+
+        {{ Forms.sublines('batches', batches, config) }}
+
+      {% if current_user.is_operator() %}
+          </div>
+        </div>
+
+        <div class="operator_todo_info" id="EXTODO"></div>
+      {% endif %}
+
+      </div></div><div class="cell p50"><div id="info-data" style="display:none;">
+
+      {% if current_user.use_extra_infopanel %}
+        <h3>Параметры партии <span class="filename" id="ex_data">{{ current_file[2] }}</span>:</h3>
+        <div class="view-container inline" id="EXDATA"></div>
+      {% endif %}
+
+        <h3>Параметры ТЗ <span class="filename" id="ex_form">{{ current_file[3] }}</span>:</h3>
+        <div id="ex_printable_area">
+          <div class="view-container inline" id="EXFORM"></div>
+        </div>
+
+        <div class="view-data-buttons" id="ex_form_buttons">
+          <button class="btn btn-primary" id="PERSO_TZ">Печать ТЗ</button>
+      {% if current_user.is_operator() %}
+          <button class="btn btn-primary" id="PERSO_MATERIALS">Заявка на материалы</button>
+          <button class="btn btn-primary" id="PERSO_CONTAINERLIST">Лист контейнера</button>
+          <button class="btn btn-primary" id="PERSO_DOCUMENTS">Документы</button>
+      {% endif %}
+        </div>
+
+      {#<div class="view-data-buttons" id="admin_form_buttons"></div>#}
+      </div>
+    </div></div>
+    
+    <div class="view-content tab" id="logs-content" style="display:none;">
+      <h3>История заказа (хронология смены статусов) <span class="filename">{{ current_file[1] }}</span>:</h3>
+      <div class="view-container view-lines" id="logs-container"></div>
+    </div>
+
+    <div class="view-content tab" id="cardholders-content" style="display:none;">
+      <h3>Лист персонализации <span class="filename">{{ current_file[1] }}</span>:</h3>
+      <div class="view-container view-lines" id="cardholders-container"></div>
+    </div>
+
+    <div class="view-content tab" id="indigo-content" style="display:none;">
+      <h3>Индивидуальный дизайн (Индиго) <span class="filename">{{ current_file[1] }}</span>:</h3>
+      <div class="view-container view-lines" id="indigo-container"></div>
+    </div>
+
+  {% if current_user.is_administrator() %}
+    <div class="view-content tab" id="body-content" style="display:none;">
+      <h3>Контент заказа (IBODY) <span class="filename">{{ current_file[1] }}</span>:</h3>
+      <div class="view-container">
+        <pre class="ibody" id="ibody-container"></pre>
+      </div>
+    </div>
+  {% endif %}
+
+    <div class="view-content tab" id="processerrmsg-content" style="display:none;">
+      <h3>Ошибки (PROCESS_ERR_MSG) <span class="filename">{{ current_file[1] }}</span>:</h3>
+      <div class="view-container">
+        <pre class="ibody" id="processerrmsg-container"></pre>
+      </div>
+    </div>
+
+    <div class="view-content tab" id="persolog-content" style="display:none;">
+      <h3>Журнал загрузки файла <span class="filename">{{ current_file[1] }}</span>:</h3>
+      <div class="view-container view-lines" id="persolog-container"></div>
+    </div>
+
+    <div class="view-content tab" id="sdclog-content" style="display:none;">
+      <h3>Журнал SDC <span class="filename">{{ current_file[1] }}</span>:</h3>
+      <div class="view-container view-lines" id="sdclog-container"></div>
+    </div>
+
+    <div class="view-content tab" id="exchangelog-content" style="display:none;">
+      <h3>Журнал инфообмена <span class="filename">{{ current_file[1] }}</span>:</h3>
+      <div class="view-container view-lines" id="exchangelog-container"></div>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block pagination_title %}Заказов / карт{% endblock %}
+
+{% block pagination_form %}
+
+    <input type="hidden" id="page" name="page" value="" />
+    <input type="hidden" id="file_id" name="file_id" value="{{ current_file[0] }}" />
+    <input type="hidden" name="bank" value="{{ args['bank'][1] }}" />
+    <input type="hidden" name="type" value="{{ args['type'][1] }}" />
+    <input type="hidden" name="status" value="{{ args['status'][1] }}" />
+    <input type="hidden" name="batchtype" value="{{ args['batchtype'][1] }}" />
+    <input type="hidden" name="batchstatus" value="{{ args['batchstatus'][1] }}" />
+    <input type="hidden" name="date_from" value="{{ args['date_from'][1] }}" />
+    <input type="hidden" name="date_to" value="{{ args['date_to'][1] }}" />
+    <input type="hidden" name="ready_from" value="{{ args['ready_from'][1] }}" />
+    <input type="hidden" name="ready_to" value="{{ args['ready_to'][1] }}" />
+    <input type="hidden" name="state" value="{{ args['state'][1] }}" />
+    <input type="hidden" id="searched" name="search" value="{{ search }}">
+
+{% endblock %}
+
+{% block filter %}
+
+  <div id="log-filter" class="bankperso-filter common-filter">
+    <div id="sidebar-filter-scroller">
+    <form action="{{ pagination['link'] }}" id="filter-form" method="POST">
+    
+    <input type="hidden" name="page" value="{{ pagination['current_page'] }}">
+    <input type="hidden" name="per-page" value="{{ pagination['per_page'] }}">
+    <input type="hidden" id="file_id" name="file_id" value="{{ current_file[0] }}">
+    <input type="hidden" id="batch_id" name="batch_id" value="{{ current_file[2] }}">
+    <input type="hidden" id="status_file_id" name="status_file_id" value="">
+    <input type="hidden" id="status_keep_history" name="status_keep_history" value="0">
+    <input type="hidden" id="status_batch_id" name="status_batch_id" value="">
+    <input type="hidden" id="selected_batch_ids" name="selected_batch_ids" value="">
+    <input type="hidden" id="searched" name="search" value="{{ search }}">
+    <input type="hidden" id="reset_search" name="reset_search" value="0">
+    <input type="hidden" id="sort" name="sort" value="{{ pagination['sort']['current_sort'] }}">
+    <input type="hidden" id="specified" name="specified" value="">
+    <input type="hidden" id="position" name="position" value="{{ pagination['position'] }}">
+    <input type="hidden" id="sidebar" name="sidebar" value="{{ sidebar['state'] }}">
+    <input type="hidden" id="batchstatus" name="batchstatus" value="{{ args['batchstatus'][1] }}">
+    <input type="hidden" id="errors" value="{{ errors }}">
+    <input type="hidden" id="OK" name="OK" value="{{ OK }}">
+    <input type="hidden" id="command" name="command" value="">
+    {% if 'extra' in pagination %}<input type="hidden" name="__" value="1">{% endif %}
+
+    <dt><div class="caption bank">Клиент:</div></dt>
+    <dd>
+        <select class="field popup" id="bank" name="bank" onchange="javascript:MakeFilterSubmit(0);">
+          {% for bank in banks -%}
+            <option value="{{ bank[0] }}" {% if args['bank'][1] == bank[0] %}selected{% endif %}>{{ bank[1] }}</option>
+          {%- endfor %}
+        </select>
+    </dd>
+
+    <dt><div class="caption type">Тип файла:</div></dt>
+    <dd>
+        <select class="field popup" id="type" name="type" onchange="javascript:MakeFilterSubmit(1);">
+          {% for type in types -%}
+            <option value="{{ type[0] }}" {% if args['type'][1] == type[0] %}selected{% endif %}>{{ type[1] }}</option>
+          {%- endfor %}
+        </select>
+    </dd>
+
+    <dt><div class="caption status" id="status-caption">Статус файла заказа:</div></dt>
+    <dd>
+        <select class="field popup" id="status" name="status" onchange="javascript:MakeFilterSubmit(2);">
+          {% for status in statuses -%}
+            <option value="{{ status[0] }}" {% if args['status'][1] == status[0] %}selected{% endif %}>{{ status[1] }}</option>
+          {%- endfor %}
+        </select>
+    </dd>
+
+    <dt><div class="caption batchtype" id="batchtype-caption">Тип партии:</div></dt>
+    <dd>
+        <select class="field popup" id="batchtype" name="batchtype" onchange="javascript:MakeFilterSubmit(3);">
+          {% for batchtype in batchtypes -%}
+            <option value="{{ batchtype[0] }}" {% if args['batchtype'][1] == batchtype[0] %}selected{% endif %}>{{ batchtype[1] }}</option>
+          {%- endfor %}
+        </select>
+    </dd>
+
+    <dt><div class="caption orderdate">Дата регистрации c:</div></dt>
+    <dd>
+        <input class="field date" type="date" id="order-date-from" name="date_from" value="{{ args['date_from'][1] }}" onchange="javascript:MakeFilterSubmit(4);">
+    </dd>
+
+    <dt><div class="caption orderdate">по:</div></dt>
+    <dd>
+        <input class="field date" type="date" id="order-date-to" name="date_to" value="{{ args['date_to'][1] }}" onchange="javascript:MakeFilterSubmit(5);">
+    </dd>
+
+    <dt><div class="caption orderdate">Дата отгрузки c:</div></dt>
+    <dd>
+        <input class="field date" type="date" id="ready-from" name="ready_from" value="{{ args['ready_from'][1] }}" onchange="javascript:MakeFilterSubmit(4);">
+    </dd>
+
+    <dt><div class="caption orderdate">по:</div></dt>
+    <dd>
+        <input class="field date" type="date" id="ready-to" name="ready_to" value="{{ args['ready_to'][1] }}" onchange="javascript:MakeFilterSubmit(5);">
+    </dd>
+
+    <dt><div class="caption state">Условие отбора:</div></dt>
+    <dd>
+        <select class="field popup" id="state" name="state" onchange="javascript:MakeFilterSubmit(6);">
+          {% for state in states -%}
+            <option value="{{ state[0] }}" {% if args['state'][1] == state[0] %}selected{% endif %}>{{ state[1] }}</option>
+          {%- endfor %}
+        </select>
+    </dd>
+    
+    </form>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block control_panel %}
+
+  <div id="control-panel">
+
+  <div class="dropdown-container">
+    <div class="dropdown" id="admin-panel-container">
+      <a class="dropdown-link" id="admin-panel-dropdown">Панель управления</a>
+      <div class="dropdown-content" id="admin-panel">
+      {% if current_user.is_administrator() %}
+        <button class="btn btn-danger" id="admin:create">Перевыгрузить заказ</button>
+        <button class="btn btn-success" id="admin:unload">Выгрузка текущего статуса файла</button>
+        <button class="btn btn-success" id="admin:imageunload">Выгрузка контента файла</button>
+        <button class="btn btn-success" id="admin:fullunload">Полная выгрузка</button>
+        <button class="btn btn-success" id="admin:tagsearch">Выгрузка списка тегов</button>
+        <button class="btn btn-danger" id="admin:delete">Удалить заказ</button>
+        <div class="line"><hr /></div>
+        <button class="btn btn-warning" id="admin:change-filestatus">Сменить статус файла</button>
+        <button class="btn btn-warning" id="admin:change-batchstatus">Сменить статус партии файла</button>
+        <div class="line"><hr /></div>
+      {% endif %}
+        <button class="btn btn-primary last-btn" id="admin:logsearch">Поиск по журналам персосети</button>
+      </div>
+    </div>
+
+    {% if current_user.is_operator() %}
+    <div class="dropdown" id="actions-container">
+      <a class="dropdown-link" id="actions-dropdown">Операции</a>
+      <div class="dropdown-content" id="actions">
+        <button class="btn btn-primary" id="action:changedate">Дата отгрузки</button>
+        <button class="btn btn-primary" id="action:changeaddress">Адрес филиала доставки</button>
+        <div class="line"><hr /></div>
+        <button class="btn btn-danger last-btn" id="action:repeatunloadedreport">Повторить выгрузку отчетов в Банк</button>
+      </div>
+    </div>
+    {% endif %}
+    
+    <div class="dropdown" id="services-container">
+      <a class="dropdown-link" id="services-dropdown">Отчеты</a>
+      <div class="dropdown-content" id="services">
+      {% if current_user.is_operator() %}
+        <button class="btn btn-primary" id="service:group-container">Лист группового контейнера</button>
+      {% endif %}
+        <button class="btn btn-primary" id="service:cardholders">Лист персонализации</button>
+        <div class="line"><hr /></div>
+        <button class="btn btn-success" id="service:kp">Статистика КП БинБанка</button>
+      {% if current_user.is_administrator() %}
+        <button class="btn btn-success" id="service:branch-list">Статистика отгрузки по филиалам (Левобережный)</button>
+        <button class="btn btn-success" id="service:design-list">Статистика отгрузки по дизайнам (ПочтаБанк)</button>
+        <div class="line"><hr /></div>
+        <button class="btn btn-danger last-btn" id="service:search-double">Дубли PAN</button>
+      {% else %}
+        <button class="btn btn-success last-btn" id="service:branch-list">Статистика доставки по филиалам</button>
+      {% endif %}
+      </div>
+    </div>
+  </div>
+  
+  </div>
+
+{% endblock %}
+
+{% block dialogs_content %}
+
+<div class="common-dialog" id="status-confirm-container" title="{{ _('Status confirmation form') }}" style="display:none;">
+  <h3 id="status-request">{{ _('Are you really going to change the status of order? Please, confirm.') }}</h3>
+</div>
+
+<div class="common-dialog" id="order-confirm-container" title="{{ _('Order confirmation form') }}" style="display:none;">
+  <h3 id="order-request">{{ _('Are you really going to create an order? Please, confirm.') }}</h3>
+</div>
+
+<div class="common-dialog" id="logsearch-confirm-container" title="{{ _('Log Search form') }}" style="display:none;">
+  <h3>{{ _('Try to search a given context in the Log files.') }}</h3>
+  <div class="common-confirmation">
+    <h4>{{ _('Log Search string format see in the application documentation.') }}</h4>
+    <div class="common-box common-panel">
+      <input class="string" id="logsearch-context" name="logsearch" type="text">
+      <label for="logsearch-apply-filter"><input type="checkbox" id="logsearch-apply-filter" value="1" checked><span>{{ _('Apply filter') }}</span></label>
+
+      <h4>{{ _('Log-file types') }}:</h4>
+
+      <label for="item-logsearch-exchange"><input type="checkbox" id="item-logsearch-exchange" value="1" checked><span>{{ _('Exchange System') }}</span></label>
+      <label for="item-logsearch-bankperso"><input type="checkbox" id="item-logsearch-bankperso" value="1" checked><span>{{ _('BankPerso') }}</span></label>
+      <label for="item-logsearch-sdc"><input type="checkbox" id="item-logsearch-sdc" value="1" checked><span>{{ _('SDC') }}</span></label>
+      <label for="item-logsearch-infoexchange"><input type="checkbox" id="item-logsearch-infoexchange" value="1"><span>{{ _('InfoExchange System') }}</span></label>
+    </div>
+  </div>
+</div>
+
+<div class="common-dialog" id="tagsearch-confirm-container" title="{{ _('Tag Search form') }}" style="display:none;">
+  <h3>{{ _('Try to search a given Tag list inside Order-body content.') }}</h3>
+  <div class="common-confirmation">
+    <h4>{{ _('Tag Search string format see in the application documentation.') }}</h4>
+    <h4>{{ _('The file is processed in the current status.') }}</h4>
+    <div class="common-box common-panel">
+      <input class="string" id="tagsearch-context" name="tagsearch" type="text">
+    </div>
+  </div>
+</div>
+
+<div class="common-dialog" id="changedate-confirm-container" title="{{ _('Change Delivery Date form') }}" style="display:none;">
+  <h3>{{ _('You can change the order delivery date.') }}</h3>
+  <div class="common-confirmation">
+    <h4>{{ _('Change Date format see in the application documentation.') }}</h4>
+    <div class="common-box common-panel changedate-context">
+      <input class="string" id="changedate" name="changedate" type="hidden">
+      <div id="changedate_box"></div>
+    </div>
+  </div>
+</div>
+
+<div class="common-dialog" id="changeaddress-confirm-container" title="{{ _('Change Address form') }}" style="display:none;">
+  <h3>{{ _('You can change the order delivery address.') }}</h3>
+  <div class="common-confirmation">
+    <h4>{{ _('Change Address format see in the application documentation.') }}</h4>
+    <div class="common-box common-panel">
+      <input class="string" id="changeaddress-context" name="changeaddress" type="text">
+
+      <h4>{{ _('Data validation types') }}:</h4>
+
+      <div class="changeaddress-item common-next">
+        <dt><div class="caption recno">Номер записи файла:</div></dt><dd><input class="string" id="changeaddress-recno" name="recno" type="text"></dd>
+      </div>
+      <div class="changeaddress-item common-next">
+        <dt><div class="caption branch">Код филиала:</div></dt><dd><input class="string" id="changeaddress-branch" name="branch" type="text"></dd>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block final_scripts %}
+
+<script type="text/javascript">
+/*
+var date = new Date();
+var now = date.getToday().split('-');
+
+alert(now);
+*/
+var $datepicker = $('#changedate').pikaday({
+  firstDay: 1,
+  bound: false,
+  //minDate: new Date(int(now[0]), int(now[1]), int(now[2])),
+  minDate: new Date(),
+  maxDate: new Date(2030, 12, 31),
+  yearRange: [2010,2030],
+  disableWeekends:true,
+  format: 'YYYY/M/D',
+  toString(date, format) {
+      // you should do formatting based on the passed format,
+      // but we will just return 'D/M/YYYY' for simplicity
+      const day = date.getDate();
+      const month = date.getMonth() + 1;
+      const year = date.getFullYear();
+      return `${day}.${month}.${year}`;
+  },
+  parse(dateString, format) {
+      // dateString is the result of `toString` method
+      const parts = dateString.split('.');
+      const day = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10) - 1;
+      const year = parseInt(parts[2], 10);
+      return new Date(year, month, day);
+  },
+  onSelect: function (date) {}, //$BankpersoSubmitDialog.verified();
+  container: document.getElementById('changedate_box')
+});
+
+</script>
+
+{% endblock %}
+

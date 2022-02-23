@@ -1,0 +1,447 @@
+﻿{% extends "common.html" %}
+
+{% import 'forms.html' as Forms %}
+
+{% block page_styles %}
+
+<link href="{{ url_for('static', filename='css/style') }}.configurator.css{{ vsc }}" rel="stylesheet" type="text/css">
+
+{% endblock %}
+
+{% block starter %}
+
+<script src="{{ url_for('static', filename='js/db.controller.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/log.default.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/webperso/configurator.dialogs.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/webperso/configurator.min.js') }}{{ vsc }}"></script>
+
+<script src="{{ url_for('static', filename='js/bankperso.default.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/webperso/reference.dialogs.min.js') }}{{ vsc }}"></script>
+
+{% endblock %}
+
+{% block data_section_content %}
+
+  <div class="configurator inline-content">
+
+    {{ Forms.lines('configurator-files', files, config) }}
+
+  </div>
+
+{% endblock %}
+
+{% block info_section_content %}
+
+  <div class="data-menu block" id="tab-content">
+    <div class="menu selected" id="data-menu-batches">Типы партий</div>
+    <!-- Addon menu -->
+    <div class="menu" id="data-menu-processes">Сценарии</div>
+    <div class="menu" id="data-menu-opers">Операции</div>
+    <div class="menu" id="data-menu-operparams">Параметры операций</div>
+    <div class="menu" id="data-menu-tags">Теги</div>
+    <div class="menu" id="data-menu-tagvalues">Значения тегов</div>
+    <div class="menu" id="data-menu-tzs">Параметры ТЗ</div>
+    <div class="menu" id="data-menu-erpcodes">Коды ЕРП</div>
+    <div class="menu" id="data-menu-materials">Материалы</div>
+    <div class="menu" id="data-menu-posts">Почта</div>
+    <div class="menu" id="data-menu-tagopers">Операции</div>
+    <div class="menu" id="data-menu-tagoperparams">Параметры операций</div>
+    <div class="menu" id="data-menu-processparams">Процессы</div>
+    <div class="menu" id="data-menu-filters">Фильтры</div>
+  </div>
+
+  <div id="info-container">
+    <div class="view-content" id="subline-content">
+      <div class="cell p50"><div id="subline-data">
+        <h3>Типы партий файла [Б] 
+          {# <span class="filename" id="subline_name">{{ current_file[1] }}</span>. #}
+          <span class="refname">DIC_FileType_BatchType_tb</span>:</h3>
+
+        {{ Forms.sublines('configurator-batches', batches, config) }}
+
+      </div></div><div class="cell p50"><div id="info-data" style="display:none;">
+        <h3>Параметры типа партии ID <span class="filename" id="ex_data">{{ current_file[3] }}</span>:</h3>
+        <div class="view-container inline" id="EXDATA"></div>
+      </div>
+    </div></div>
+
+    <div class="view-content tab" id="processes-content" style="display:none;">
+      <h3>Сценарии [С] 
+        {# <span class="filename">{{ current_file[1] }}</span>. #}
+        <span class="refname">DIC_OrderFileProcess_tb</span>:</h3>
+      <div class="view-container view-lines" id="processes-container"></div>
+    </div>
+
+    <div class="view-content tab" id="opers-content" style="display:none;">
+      <h3>Операции [ОП] 
+        {# <span class="filename">{{ current_file[1] }}</span>. #}
+        <span class="refname">DIC_FileType_BatchType_OperList_tb</span>:</h3>
+      <div class="view-container view-lines" id="opers-container"></div>
+    </div>
+
+    <div class="view-content tab" id="operparams-content" style="display:none;">
+      <h3>Параметры операций [ПО] 
+        {# <span class="filename">{{ current_file[1] }}</span>. #}
+        <span class="refname">DIC_FileType_BatchType_OperList_Params_tb</span>:</h3>
+      <div class="view-container view-lines" id="operparams-container"></div>
+    </div>
+
+    <div class="view-content tab" id="filters-content" style="display:none;">
+      <h3>Фильтры [СФ] 
+        {# <span class="filename">{{ current_file[1] }}</span>. #}
+        <span class="refname">DIC_FileType_BatchType_FilterShema_tb</span>:</h3>
+      <div class="view-container view-lines" id="filters-container"></div>
+    </div>
+
+    <div class="view-content tab" id="tags-content" style="display:none;">
+      <h3>Теги [П] 
+        {# <span class="filename">{{ current_file[1] }}</span>. #}
+        <span class="refname">DIC_FileType_TagList_tb</span>:</h3>
+      <div class="view-container view-lines" id="tags-container"></div>
+    </div>
+
+    <div class="view-content tab" id="tagvalues-content" style="display:none;">
+      <h3>Значения тегов [ЗП] 
+        {# <span class="filename">{{ current_file[1] }}</span>. #}
+        <span class="refname">DIC_FileType_TagList_TagValues_tb</span>:</h3>
+      <div class="view-container view-lines" id="tagvalues-container"></div>
+    </div>
+
+    <div class="view-content tab" id="tzs-content" style="display:none;">
+      <h3>Параметры ТЗ [ТЗ] 
+        {# <span class="filename">{{ current_file[1] }}</span>. #}
+        <span class="refname">DIC_FTV_TZ_tb</span>:</h3>
+      <div class="view-container view-lines" id="tzs-container"></div>
+    </div>
+
+    <div class="view-content tab" id="erpcodes-content" style="display:none;">
+      <h3>Коды ЕРП [ЕРП] 
+        {# <span class="filename">{{ current_file[1] }}</span>. #}
+        <span class="refname">DIC_FTV_ERPCODE_tb</span>:</h3>
+      <div class="view-container view-lines" id="erpcodes-container"></div>
+    </div>
+
+    <div class="view-content tab" id="materials-content" style="display:none;">
+      <h3>Материалы [РМ] 
+        {# <span class="filename">{{ current_file[1] }}</span>. #}
+        <span class="refname">DIC_FTV_MATERIAL_tb</span>:</h3>
+      <div class="view-container view-lines" id="materials-container"></div>
+    </div>
+
+    <div class="view-content tab" id="posts-content" style="display:none;">
+      <h3>Почтовые параметры [ПчФ] 
+        {# <span class="filename">{{ current_file[1] }}</span>. #}
+        <span class="refname">DIC_FTV_POST_tb</span>:</h3>
+      <div class="view-container view-lines" id="posts-container"></div>
+    </div>
+
+    <div class="view-content tab" id="tagopers-content" style="display:none;">
+      <h3>Операции [О] 
+        {# <span class="filename">{{ current_file[1] }}</span>. #}
+        <span class="refname">DIC_FTV_OPER_tb</span>:</h3>
+      <div class="view-container view-lines" id="tagopers-container"></div>
+    </div>
+
+    <div class="view-content tab" id="tagoperparams-content" style="display:none;">
+      <h3>Параметры операций [ПО] 
+        {# <span class="filename">{{ current_file[1] }}</span>. #}
+        <span class="refname">DIC_FTV_OPER_PARAMS_tb</span>:</h3>
+      <div class="view-container view-lines" id="tagoperparams-container"></div>
+    </div>
+
+    <div class="view-content tab" id="processparams-content" style="display:none;">
+      <h3>Параметры процессов [ПрЦ] 
+        {# <span class="filename">{{ current_file[1] }}</span>. #}
+        <span class="refname">DIC_FTV_PROCESS_tb</span>:</h3>
+      <div class="view-container view-lines" id="processparams-container"></div>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block pagination_title %}Типов файлов / партий{% endblock %}
+
+{% block pagination_form %}
+
+    <input type="hidden" id="page" name="page" value="" />
+    <input type="hidden" name="client" value="{{ args['client'][1] }}" />
+    <input type="hidden" name="filetype" value="{{ args['filetype'][1] }}" />
+    <input type="hidden" name="batchtype" value="{{ args['batchtype'][1] }}" />
+    <input type="hidden" id="file_id" name="file_id" value="{{ current_file[0] }}" />
+    <input type="hidden" id="batch_id" name="batch_id" value="{{ current_file[2] }}">
+    <input type="hidden" id="searched" name="search" value="{{ search }}">
+
+{% endblock %}
+
+{% block pagination_icons %}
+
+  <td><img id="tree-view-icon" src="{{ root }}static/img/treeb-40.png" title="{{ _('Tree view') }}" alt=""></td>
+
+{% endblock %}
+
+{% block filter %}
+
+  <div id="log-filter" class="configurator-filter common-filter">
+    <div id="sidebar-filter-scroller">
+    <form action="{{ pagination['link'] }}" id="filter-form" method="POST">
+
+    <input type="hidden" name="page" value="{{ pagination['current_page'] }}">
+    <input type="hidden" name="per-page" value="{{ pagination['per_page'] }}">
+    <input type="hidden" id="file_id" name="file_id" value="{{ current_file[0] }}">
+    <input type="hidden" id="batch_id" name="batch_id" value="{{ current_file[2] }}">
+    <input type="hidden" id="searched" name="search" value="{{ search }}">
+    <input type="hidden" id="reset_search" name="reset_search" value="0">
+    <input type="hidden" id="sort" name="sort" value="{{ pagination['sort']['current_sort'] }}">
+    <input type="hidden" id="position" name="position" value="{{ pagination['position'] }}">
+    <input type="hidden" id="sidebar" name="sidebar" value="{{ sidebar['state'] }}">
+    <input type="hidden" id="errors" value="{{ errors }}">
+    <input type="hidden" id="OK" name="OK" value="{{ OK }}">
+    <input type="hidden" id="command" name="command" value="">
+
+    <dt><div class="caption bank">Клиент:</div></dt>
+    <dd>
+        <select class="field popup" id="client" name="client" onchange="javascript:MakeFilterSubmit(0);">
+          {% for client in clients -%}
+            <option value="{{ client[0] }}" {% if args['client'][1] == client[0] %}selected{% endif %}>{{ client[1] }}</option>
+          {%- endfor %}
+        </select>
+    </dd>
+
+    <dt><div class="caption filetype">Тип файла:</div></dt>
+    <dd>
+        <select class="field popup" id="filetype" name="filetype" onchange="javascript:MakeFilterSubmit(1);">
+          {% for filetype in filetypes -%}
+            <option value="{{ filetype[0] }}" {% if args['filetype'][1] == filetype[0] %}selected{% endif %}>{{ filetype[1] }}</option>
+          {%- endfor %}
+        </select>
+    </dd>
+
+    <dt><div class="caption batchtype">Тип партии:</div></dt>
+    <dd>
+        <select class="field popup" id="batchtype" name="batchtype" onchange="javascript:MakeFilterSubmit(2);">
+          {% for batchtype in batchtypes -%}
+            <option value="{{ batchtype[0] }}" {% if args['batchtype'][1] == batchtype[0] %}selected{% endif %}>{{ batchtype[1] }}</option>
+          {%- endfor %}
+        </select>
+    </dd>
+
+    <dt><div class="caption tagname">Тег:</div></dt>
+    <dd>
+        <select class="field popup" id="tag" name="tag" onchange="javascript:MakeFilterSubmit(3);">
+          {% for tag in tags -%}
+            <option value="{{ tag }}" {% if args['tag'][1] == tag %}selected{% endif %}>{{ tag }}</option>
+          {%- endfor %}
+        </select>
+    </dd>
+
+    <dt><div class="caption tagvalue">Значение:</div></dt>
+    <dd>
+        <select class="field popup" id="tagvalue" name="tagvalue" onchange="javascript:MakeFilterSubmit(4);">
+          {% for tagvalue in tagvalues -%}
+            <option value="{{ tagvalue }}" {% if args['tagvalue'][1] == tagvalue %}selected{% endif %}>{{ tagvalue }}</option>
+          {%- endfor %}
+        </select>
+    </dd>
+
+    </form>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block control_panel %}
+
+  <div id="control-panel">
+
+  <div class="dropdown-container">
+
+    {% if current_user.is_administrator() %}
+    <div class="dropdown" id="admin-panel-container">
+      <a class="dropdown-link" id="admin-panel-dropdown">Панель управления</a>
+      <div class="dropdown-content" id="admin-panel">
+        <button class="btn btn-warning" id="admin:add">Добавить параметр</button>
+        <button class="btn btn-success" id="admin:update">Редактировать параметр</button>
+        <button class="btn btn-danger last-btn" id="admin:remove">Удалить параметр</button>
+      </div>
+    </div>
+    {% endif %}
+    
+    <div class="dropdown" id="services-container">
+      <a class="dropdown-link" id="services-dropdown">Справочники</a>
+      <div class="dropdown-content" id="services">
+        <button class="btn btn-primary" id="service:file-type">Типы файлов</button>
+        <button class="btn btn-primary" id="service:batch-type">Типы партий</button>
+        <button class="btn btn-primary" id="service:oper-type">Типы операций</button>
+        <div class="line"><hr /></div>
+        <button class="btn btn-primary" id="service:clients">Клиенты</button>
+        <button class="btn btn-primary" id="service:file-status">Статусы файлов</button>
+        <button class="btn btn-primary" id="service:batch-status">Статусы партий</button>
+        <button class="btn btn-primary" id="service:oper-list">Операции</button>
+        <div class="line"><hr /></div>
+        <button class="btn btn-primary" id="service:tag-params">Параметры тегов</button>
+        <button class="btn btn-primary" id="service:ftv-oper-params">Параметры персонализации</button>
+        <button class="btn btn-primary last-btn" id="service:ftb-post">Параметры почты</button>
+      </div>
+    </div>
+    
+    {% if current_user.is_administrator() %}
+    <div class="dropdown" id="actions-container">
+      <a class="dropdown-link" id="actions-dropdown">Генератор</a>
+      <div class="dropdown-content" id="actions">
+        <button class="btn btn-primary" id="action:configscenario">Создать конфигурацию</button>
+        <button class="btn btn-success" id="action:createdesign">Добавить дизайн CardStandard</button>
+        <div class="line"><hr /></div>
+        <button class="btn btn-danger last-btn" id="action:removescenario">Удалить конфигурацию</button>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  </div>
+
+{% endblock %}
+
+{% block dialogs_content %}
+
+<div class="common-dialog" id="reference-container" title="{{ _('Reference form') }}" style="display:none;">
+  <h3 id="reference-title"></h3>
+</div>
+
+<div class="common-dialog" id="configscenario-confirm-container" title="{{ _('Create Scenario settings form') }}" style="display:none;">
+  <h3>{{ _('Input form items to generate a new Scenario settings.') }}</h3>
+  <div class="common-confirmation">
+    <h4>{{ _('Create Scenario string format see in the application documentation.') }}</h4>
+    <div class="common-box common-panel" id="configscenario-box">
+      <form action="{{ pagination['link'] }}" class="common-form" id="configscenario-form" method="POST">
+      <input type="hidden" id="file_id" name="file_id" value="{{ current_file[0] }}">
+      <input type="hidden" name="position" value="{{ pagination['position'] }}">
+      <input type="hidden" name="sidebar" value="{{ sidebar['state'] }}">
+      <input type="hidden" id="OK" name="OK" value="{{ OK }}">
+      <input type="hidden" id="command" name="command" value="">
+
+      <div class="configscenario-item">
+        <dt><div class="caption configtype">Тип сценария:</div></dt><dd>
+          <select class="popup" id="configscenario_configtype" name="configtype">
+            <option value="cardstandard">CardStandard</option>
+            <option value="easy">CardStandard Easy</option>
+          </select>
+        </dd>
+      </div>
+
+      <h4>Опции:</h4>
+
+      <label for="configscenario-pcode"><input type="checkbox" id="configscenario-pcode" name="pcode" value="1" checked><span>Печать ПИН-конвертов</span></label>
+      <label for="configscenario-filter"><input type="checkbox" id="configscenario-filter" name="filter" value="1" checked><span>Включить фильтр</span></label>
+
+      <hr />
+
+      <div class="configscenario-item common-next">
+        <dt><div class="caption clientname">Наименование клиента:</div></dt><dd><input class="string" id="configscenario_clientname" name="clientname" type="text"></dd>
+      </div>
+      <div class="configscenario-item common-next">
+        <dt><div class="caption clientid">ID клиента:</div></dt><dd><input class="string" id="configscenario_clientid" name="clientid" type="text"></dd>
+      </div>
+
+      <hr />
+
+      <h4>Теги:</h4>
+
+      <table class="configscenario-label"><tr><td>
+
+      <label for="configscenario-deliverytype">
+        <input type="checkbox" id="configscenario-deliverytype" name="deliverytype" value="1" checked><span>DeliveryType</span></label>
+      <label for="configscenario-dumpbankflag">
+        <input type="checkbox" id="configscenario-dumpbankflag" name="dumpbankflag" value="1"><span>DUMPBANK_FLAG</span></label>
+      <label for="configscenario-idvsp">
+        <input type="checkbox" id="configscenario-idvsp" name="idvsp" value="1" checked><span>ID_VSP</span></label>
+      
+      <td><td>
+      
+      <label for="configscenario-ischip">
+        <input type="checkbox" id="configscenario-ischip" name="ischip" value="1" checked><span>IsChip</span></label>
+      <label for="configscenario-ispost">
+        <input type="checkbox" id="configscenario-ispost" name="ispost" value="1"><span>IsPost</span></label>
+      <label for="configscenario-packagecode">
+        <input type="checkbox" id="configscenario-packagecode" name="packagecode" value="1" checked><span>PackageCode</span></label>
+      
+      <td><td>
+      
+      <label for="configscenario-paysystem">
+        <input type="checkbox" id="configscenario-paysystem" name="paysystem" value="1" checked><span>PAY_SYSTEM</span></label>
+      <label for="configscenario-plastictype">
+        <input type="checkbox" id="configscenario-plastictype" name="plastictype" value="1" checked><span>PlasticType</span></label>
+      <label for="configscenario-readydate">
+        <input type="checkbox" id="configscenario-readydate" name="readydate" value="1"><span>ReadyDate</span></label>
+      
+      <td><td>
+      
+      <label for="configscenario-registerdate">
+        <input type="checkbox" id="configscenario-registerdate" name="registerdate" value="1"><span>RegisterDate</span></label>
+      
+      </td></tr></table>
+
+      <div class="configscenario-item common-next">
+        <dt class="maxbatchsize"><div class="caption">Максимальное количество карт в партии:</div></dt>
+        <dd><input id="configscenario_maxbatchsize" name="maxbatchsize" type="number" value="500"></dd>
+      </div>
+      <div class="configscenario-item common-next">
+        <dt><div class="caption pinincreg">Реестр инкассации ПИН-конвертов:</div></dt>
+        <dd><input class="string" id="configscenario_pinincreg" name="pinincreg" type="text"></dd>
+      </div>
+      <div class="configscenario-item common-next">
+        <dt><div class="caption crdincreg">Реестр инкассации карт:</div></dt>
+        <dd><input class="string" id="configscenario_crdincreg" name="crdincreg" type="text"></dd>
+      </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="common-dialog" id="createdesign-confirm-container" title="{{ _('Add new design form') }}" style="display:none;">
+  <h3>{{ _('Input form items to generate a new CardStandard product design.') }}</h3>
+  <div class="common-confirmation">
+    <h4>{{ _('Create Design string format see in the application documentation.') }}</h4>
+    <div class="common-box common-panel" id="createdesign-box">
+      <form action="{{ pagination['link'] }}" class="common-form" id="createdesign-form" method="POST">
+      <input type="hidden" name="file_id" value="{{ current_file[0] }}">
+      <input type="hidden" name="position" value="{{ pagination['position'] }}">
+      <input type="hidden" name="sidebar" value="{{ sidebar['state'] }}">
+      <input type="hidden" id="OK" name="OK" value="{{ OK }}">
+      <input type="hidden" name="command" value="admin:createdesign">
+
+      <div class="createdesign-item">
+        <dt><div class="caption cardtype">Тип карты:</div></dt><dd><input class="string" id="createdesign_cardtype" name="cardtype" type="text"></dd>
+      </div>
+      <div class="createdesign-item common-next">
+        <dt><div class="caption bin">БИН:</div></dt><dd><input class="string" id="createdesign_bin" name="bin" type="text"></dd>
+      </div>
+      <div class="createdesign-item common-next">
+        <dt><div class="caption erp">ERP ТЗ:</div></dt><dd><input class="string" id="createdesign_erp" name="erp" type="text">
+        <span class="common-mark">* {{ _('May be omitted') }}</span></dd>
+      </div>
+      <div class="createdesign-item common-next">
+        <dt><div class="caption prerp">Производственное ТЗ:</div></dt><dd><input class="string" id="createdesign_prerp" name="prerp" type="text">
+        <span class="common-mark">* {{ _('May be omitted') }}</span></dd>
+      </div>
+      <div class="createdesign-item common-next">
+        <dt><div class="caption code">Код пластика:</div></dt><dd><input class="string" id="createdesign_code" name="code" type="text"></dd>
+        <span class="common-mark">VP00</span></dd>
+      </div>
+      <div class="createdesign-item common-next">
+        <dt><div class="caption design">Номер дизайна (Вид):</div></dt><dd><input class="string" id="createdesign_design" name="design" type="text"></dd>
+        <span class="common-mark">{{ _('Number') }}</span></dd>
+      </div>
+      <div class="createdesign-item common-next">
+        <dt><div class="caption frontside">Лицевая сторона:</div></dt><dd><textarea class="string" id="createdesign_frontside" name="frontside"></textarea></dd>
+      </div>
+      <div class="createdesign-item common-next">
+        <dt><div class="caption backside">Оборотная сторона:</div></dt><dd><textarea class="string" id="createdesign_backside" name="backside"></textarea></dd>
+      </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

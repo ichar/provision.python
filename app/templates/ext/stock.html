@@ -1,0 +1,181 @@
+{% extends "simple.html" %}
+
+{% import 'items.html' as Items %}
+
+{% block styles %}
+
+<style type="text/css">
+
+::-webkit-scrollbar {
+    width: 10px !important;
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(200, 200, 200, 0.5) !important;
+}
+
+</style>
+
+{% endblock %}
+
+{% block starter %}
+
+<script src="{{ url_for('static', filename='js/db.controller.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/stock.dialogs.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/scroll.caption.min.js') }}{{ vsc }}"></script>
+
+<script src="{{ url_for('static', filename='js/stock.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/reports.min.js') }}{{ vsc }}"></script>
+
+<script type="text/javascript">
+
+var uid = '{{ uid }}';
+var seller = '{{ seller }}';
+
+</script> 
+
+{% endblock %}
+
+{% block header %}
+
+{% include 'simple-header.html' %}
+
+{% endblock %}
+
+{% block page_content %}
+
+<div class="ext-page" id="page-container">
+  <div class="caption-container" id="caption">
+    <input type="hidden" id="OK" name="OK" value="{{ OK }}">
+
+    <div class="history">
+      <div class="back" id="history:back" title="{{ _('Go back') }}"><<</div>
+      <div class="forward" id="history:forward" title="{{ _('Go forward') }}">>></div>
+    </div>
+
+    <div class="caption">{{ _('Stock Order List') }}</div>
+    <div class="caption-name">
+      <table border="0">
+      <tr>
+      <td><h1>{{ attrs['rendered_link']|safe }}</h1></td>
+      <td>
+      <div class="caption-buttons">
+    {% if not is_mobile %}
+        <button class="btn btn-primary" id="stock:print">Печать</button>
+    {% endif %}
+        <button class="btn btn-primary" id="stock:sort" title="Рублевый эквивалент">Сортировка</button>  
+    {% if current_user.app_is_provision_manager %}
+        <button class="btn btn-warning" id="stock:update">Редактировать</button>
+    {% else %}
+        <button class="btn btn-warning" id="stock:read">Просмотр</button>
+    {% endif %}
+    {%- if page_menu -%}
+      {% for item in page_menu %}
+        <button class="btn btn-{{ item[3] }}" href="{{ item[2] }}" id="stock:{{ item[0] }}">{{ item[1] }}</button>
+      {% endfor %}
+    {%- endif -%}
+      </div>
+      </td></tr></table>
+    </div>
+
+    <div class="header">
+      <div class="address">
+        <p>{{ _('Stock Details') }}: {{ attrs['Title'] }}</p>
+        <p>{{ _('1C code') }}: {{ attrs['RefCode1C'] }}</p>
+        <p>{{ _('Comment') }}: {{ attrs['Comment'] }}</p>
+
+        <p class="header-query-string">{{ registry['QueryString'] }}</p>
+      </div>
+
+      <div class="sum_price">{{ _('Total orders') }}: 
+        <span class="total_count">{{ total }}</span> {{ _('with price') }} 
+        <span class="total_price">{{ sum_price }}</span> {{ currency }}
+      </div>
+    </div>
+  </div>
+
+  <div class="view-container" id="line-content">
+    <form action="{{ action }}" class="common-form" id="stock-orders-form" method="POST" enctype="multipart/form-data">
+      <input type="hidden" id="command" name="command" value="">
+
+    <table class="lines" border="0">
+  {% for order in orders -%}
+    {% set id = order['TID'] -%}
+
+    <tr class="line" id="row-line:{{ id }}:{{ loop.index }}">
+    {% for column in columns -%}
+      <td class="column {{ column }} {{ order['classes'].get(column, '') }}" title="{{ titles[id][column] }}">{{ order[column] }}</td>
+    {%- endfor -%}
+    </tr>
+
+    <tr>
+      <td colspan="{{ columns|length }}">
+      <div class="info-container {{ states[0] }}" id="info:{{ id }}:{{ loop.index }}">
+        <table class="info" border="0">
+      {% for key in keys -%}
+          <tr><td><dt>{{ headers[key]['title'] }}:</dt></td><td class="{{ headers[key]['class'] }}"><dd>{{ items[id][key]|safe }}</dd></td></tr>
+      {%- endfor -%}
+        </table>
+      </div>
+      </td>
+    </tr>
+
+  {%- endfor -%}
+    </table>
+
+  {%- if not orders -%}
+    <div class="nodata">{{ _('No data') }}</div>
+  {%- endif -%}
+
+    </form>
+  </div>
+</div>
+
+<form action="" id="filter-form" method="POST"></form>
+
+{% endblock %}
+
+{% block dialogs_content %}
+
+<div class="common-dialog" id="stock-confirm-container" title="{{ _('Stock edit form') }}" style="display:none;">
+  <h3 id="stock-header">{{ _('Input form items to edit Stock attributes.') }}</h3>
+  <div class="common-confirmation">
+    <h4 id="stock-caption">{{ _('Stock rules see in the application documentation.') }}</h4>
+    <div class="common-box common-panel">
+      <div id="stock-box">
+        <form action="{{ action }}" class="common-form" id="stock-form" method="POST">
+          <input type="hidden" name="uid" value="{{ uid }}">
+          <input type="hidden" id="command" name="command" value="">
+
+        <div class="stock-item common-next">
+
+          {{ Items.input('name', 'name', 'text', registry['Name'], 'caption name', 'Наименование', 0, '') }}
+
+        </div>
+        <div class="stock-item common-next">
+
+          {{ Items.textarea('title', 'title', registry['Title'], 'caption title', 'Техническая информация', 0, '') }}
+
+        </div>
+        <div class="stock-item common-next">
+
+          {{ Items.input('shortname', 'shortname', 'text', registry['ShortName'], 'caption name', 'Вид', 0, '') }}
+
+        </div>
+        <div class="stock-item common-next">
+
+          {{ Items.input('refcode1c', 'refcode1c', 'text', registry['RefCode1C'], 'caption code', 'Код номенклатуры 1C', 0, '') }}
+
+        </div>
+        <div class="stock-item common-next">
+
+          {{ Items.textarea('comment', 'comment', registry['Comment'], 'caption address', 'Примечание', 0, '') }}
+
+        </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

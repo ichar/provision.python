@@ -1,0 +1,39 @@
+
+/*** List Item Side Control:accord ***/
+
+div.accord {
+    border:1px solid #e7e7e7;
+    margin-top:-1px;
+    padding:10px;
+}
+
+div.accord div { display:inline-block; }
+
+div.accord-data ul { padding:0; margin:0; }
+div.accord-data li {
+    background-color:beige;
+    border:1px solid #aaa;
+    margin:1px 0 1px 0;
+    line-height:18px;
+}
+
+div.accord-data {
+    border:1px solid #a7a7a7;
+    overflow-x:hidden; 
+    overflow-y:auto;
+    width:220px;
+    height:232px; /* one item 21px */
+    vertical-align:top;
+}
+
+div.accord-data li { padding:0 10px 0 10px; cursor:pointer; }
+
+div.accord-left, #accord-right {
+    font-size:12px;
+    color:#333;
+}
+
+div.accord li.selected { background-color:#c20; color:white; }
+
+div.accord-commands { margin:0 10px 0 10px; }
+div.accord-commands input[type="button"] { width:60px; }

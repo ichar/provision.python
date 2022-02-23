@@ -1,0 +1,159 @@
+{% extends "simple.html" %}
+
+{% from 'templates.html' import render_calculator_item %}
+
+{% block starter %}
+
+<script src="{{ url_for('static', filename='js/db.controller.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/show.min.js') }}{{ vsc }}"></script>
+
+<script src="{{ url_for('static', filename='js/calculator.manager.min.js') }}{{ vsc }}"></script>
+
+{% endblock %}
+
+{% block header %}
+
+{% include 'simple-header.html' %}
+
+{% endblock %}
+
+{% block page_content %}
+
+<div class="calculator">
+
+  <form action="{{ base }}" class="form" id="calculator" method="POST">
+  <input type="hidden" id="command" name="command" value="">
+
+  <div class="top">
+    <div class="bound">
+      <dt>Тираж:</dt>
+      <select id="bound" name="bound">
+        {%- for bound in bounds %}<option value="{{ bound[0] }}">{{ bound[1] }}</option>{% endfor -%}
+      </select>
+    </div>
+    <div class="panel">
+      <button class="btn btn-primary" id="loc_export">Экспортировать</button>
+      <button class="btn btn-primary" id="reload">Сбросить</button>
+      <button class="btn btn-danger" id="back">Выход</button>
+      <div class="sign">
+        <img id="sign" src="{{ root }}static/img/sign-off.png" title="{{ _('Off') }}" alt="">
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="common-tab-head common-tab-head-top" id="calculator-tabs">
+    <ul>
+    {%- for tid in tabs['_'] -%}
+    {%- set tab = tabs[tid] -%}
+      <li class="{{ tab.selected }}"><a href="#" class="common-tab" id="tab:{{ tid }}">{{ tab.title }}</a></li>
+    {%- endfor -%}
+    </ul>
+  </div>
+
+  <div class="common-tab-data-top" id="info-container">
+    
+    <div class="cell" id="calculator-data"><div>
+      {%- for tid in tabs['_'] -%}
+      {%- set tab = tabs[tid] -%}
+      <div class="{% if not tab.selected %}hidden{% endif %}" id="box_{{ tid }}">
+        <h2>{% if comments[tid] %}{{ comments[tid][0][0] }}{% endif %}</h2>
+        <div class="tab">
+          <table class="data" border="0">
+          {%- for gid in groups['tabs'][tid] -%}
+          {%- set group = groups[gid] -%}
+          <tr>
+            <td class="group"><h3>{{ group.title|safe }}</h3></td>
+            {% if group.ctype in '0:1' and group.options %}
+              {%- for side in group.options -%}
+            <td class="side"><div>{{ side }}</div></td>
+              {%- endfor -%}
+            {% endif %}
+          </tr>
+            {%- for iid in items['groups'][gid] -%}
+            {%- set item = items[iid] -%}
+              {{ render_calculator_item(group.ctype, iid, item, comments[iid]) }}
+            {%- endfor -%}
+          {%- endfor -%}
+          </table>
+        </div>
+      </div>
+      {%- endfor -%}
+    </div></div>
+  
+    <div class="cell"><div id="info-data">
+      <div class="cell results" id="calculator-results">
+        <table>
+        {%- for id, title in results -%}
+          <tr><td><div class="title">{{ title }}:</div><div class="sum" id="{{ id }}">0.000</div></td></tr>
+        {%- endfor -%}
+        </table>
+      </div>
+
+      <div class="cell options">
+        <div id="calculator-options">
+          <span>Расчетные параметры:</span>
+          <table>
+          {%- for title, ctype, values in options -%}
+          <tr><td class="title">{{ title }}:</td></tr>
+            {%- for id, name, value, label, checked in values -%}
+          <tr class="option">
+            {%- if ctype == '2' -%}
+            <td class="value"><input type="radio" id="{{ id }}" name="{{ name }}" value="{{ value }}" {% if checked %}checked{% endif %}></td>
+            <td class="label"><label for="{{ id }}">{{ label }}</label></td>
+            {%- elif ctype == '1' -%}
+            <td class="value" colspan="2"><input type="number" id="{{ id }}" name="{{ name }}" value="{{ value }}"></td>
+            {%- endif -%}
+          </tr>
+            {%- endfor -%}
+          {%- endfor -%}
+          </table>
+        </div>
+        <div id="calculator-measures">
+          <span>Коэффициенты:</span>
+          <table>
+          {%- for title, value in measures -%}
+          <tr>
+            <td class="title">{{ title }}:</td>
+            <td class="label measure"><span>{{ value }}</span></td>
+          </tr>
+          {%- endfor -%}
+          </table>
+        </div>
+      </div>
+    </div></div>
+
+  </div>
+
+  </form>
+
+  <div class="images">
+  {%- for id in images -%}
+  {%- set stype, files = images[id] %}
+    <div class="image hidden" id="image_{{ id }}">
+    {%- for filename in files -%}
+    {%- set margin = loop.index0 * 100 -%}
+      <img src="{{ root }}static/images/{{ filename }}" alt="DraggableImage" 
+        {%- if stype == '0' -%}
+        class="standard" style="margin-left:{{ margin }}px;{% if not loop.first %}margin-top:-50px;{% endif %}"
+        {%- elif stype == '1' -%}
+        class="inline" style="{% if not loop.first %}margin-left:10px;{% endif %}"
+        {%- endif -%}
+        >
+    {%- endfor -%}
+    </div>
+  {%- endfor -%}
+  </div>
+
+</div>
+
+<form action="" id="filter-form" method="POST"></form>
+
+<section id="footer-section">
+
+  {% block footer %}{% include 'default-footer.html' %}{% endblock %}
+
+</section>
+
+{% endblock %}

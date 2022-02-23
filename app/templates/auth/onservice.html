@@ -1,0 +1,43 @@
+{% extends "simple.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block styles %}
+
+<style type="text/css">
+
+div.page-header { position:absolute !important; }
+
+</style>
+
+{% endblock %}
+
+{% block starter %}
+
+<script type="text/javascript">
+
+var page_is_focused = 0;
+
+var $SidebarDialog = null;
+
+</script> 
+
+{% endblock %}
+
+{% block page_content %}
+
+<div class="page-header">
+    <div class="onservice">
+
+      <h1>{{ _('Application unreachable by servicing reasons') }}</h1>
+
+      <h2> {{ message }} </h2>
+
+      <hr>
+
+      <h3>{{ _('Sorry for inconvenience') }}</h3>
+
+    </div>
+</div>
+
+{% endblock %}

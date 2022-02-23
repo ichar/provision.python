@@ -1,0 +1,121 @@
+{% extends "simple.html" %}
+
+{% from 'templates.html' import render_calculator_item %}
+
+{% block starter %}
+
+<script src="{{ url_for('static', filename='js/db.controller.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/catalog.js') }}{{ vsc }}"></script>
+
+<script src="{{ url_for('static', filename='js/catalog.default.js') }}{{ vsc }}"></script>
+
+<script type="text/javascript">
+
+var dependences = new Object();
+
+{%- for key, value in dependences -%}
+    dependences['{{ key }}'] = { {{ value|safe }} };
+{%- endfor -%}
+
+//alert(reprObject(dependences));
+
+</script> 
+
+{% endblock %}
+
+{% block header %}
+
+<header id="page-header">
+  <div id="header-content" class="{{ header_class }}">
+    <div class="page-header {{ header_subclass }}" id="pageCaption">{{ page_title }}</div>
+
+    <div id="menu">
+      <button class="btn btn-danger" id="back">Выход</button>
+    </div>
+  </div>
+</header>
+
+{% endblock %}
+
+{% block page_content %}
+<div class="catalog">
+  {%- for tid in tabs['_'] -%}
+  {%- set tab = tabs[tid] -%}
+  <div class="tab" id="box_{{ tid }}">
+
+    {%- for gid in groups['tabs'][tid] -%}
+    {%- set group = groups[gid] -%}
+
+    <div class="group">
+      <h3>{{ group.title|safe }}</h3>
+    </div>
+
+      {%- for iid in items['groups'][gid] -%}
+      {%- set item = items[iid] -%}
+
+    <div class="frame {{ loop.cycle('odd', 'even') }}">
+
+      <div class="left_pane">
+        <div class="image">
+          <img id="image_{{ item.id }}" src="/static/images/{{ item.image }}" alt="device {{ loop.index }}">
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="info">
+          <div class="header">
+            <h2 class="device_title">{{ item.title }}</h2>
+            <h3 class="device_info">{{ item.info }}</h3>
+            {%- for comment in item.comments -%}
+              <p>{{ comment|safe }}</p>
+            {%- endfor -%}
+          </div>
+
+          <div class="right_pane">
+            <div class="price">
+              <span id="price_{{ item.id }}" class="device_price">= {{ item.price }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="options">
+          <table border="0">
+          <tr>
+            {%- for option in item.options -%}
+            <td class="option">
+              <dt>{{ option.title }}:</dt>
+              <dd>
+                <div class="choices">
+                {%- for choice in option.choices -%}
+                  <div class="choice">
+                    <input type="{{ choice.ctype }}" id="{{ choice.id }}" name="radio_{{ choice.name }}" value="{{ choice.value }}" 
+                      {% if choice.checked %}checked{% endif %}><span></span>
+                    <label for="{{ choice.id }}">{{ choice.title }}</label>
+                  </div>
+                {%- endfor -%}
+                </div>
+              </dd>
+            </td>
+            {%- endfor -%}
+          </tr>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+      {%- endfor -%}
+    {%- endfor -%}
+
+  </div>
+  {%- endfor -%}
+
+</div>
+
+<section id="footer-section">
+
+  {% block footer %}{% include 'default-footer.html' %}{% endblock %}
+
+</section>
+
+{% endblock %}

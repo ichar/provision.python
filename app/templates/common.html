@@ -1,0 +1,239 @@
+{% extends "base.html" %}
+
+{% block styles %}
+
+{% block page_styles %}{% endblock %}
+
+<style type="text/css">
+
+{% if sidebar['state'] == 1 -%}
+
+#sidebar-navigator { background-image: url("/static/img/s72.png"); }
+#dataFrame { margin-left:422px; }
+
+{%- else -%}
+
+#sidebar-navigator { background-image: url("/static/img/s71.png"); background-position:center center; }
+#semaphore, #sidebar-content { display:none; }
+#dataFrame { margin-left:50px; }
+
+{%- endif %}
+
+#semaphore { margin:3px 12px 3px 0; }
+
+</style>
+
+{% endblock %}
+
+{% block sidebar_content %}
+
+<div id="sidebarBox">
+  <div id="sidebarFrame">
+
+    <div id="sidebar-semaphore">
+      <table border="0"><tr>
+        <td><div id="semaphore" class="semaphore-default-background">
+          {% for i in range(semaphore['count']) %}
+            <div class="semaphore-item semaphore-default-item" id="semaphore-{{ semaphore['ids'][i] }}" title="{{ _(semaphore['titles'][i]) }}"></div>
+          {% endfor %}
+        </div></td>
+        <td><div id="sidebar-navigator" title="{{ _('Click it to collapse&expand sidebar control') }}"></div></td>
+      </tr></table>
+    </div>
+
+    <div id="sidebar-content">
+    
+      <div id="menu">
+
+      {{ Forms.commands(base) }}
+
+      {{ Forms.search(root, search) }}
+
+      </div>
+
+      {% block control_panel %}{% endblock %}
+
+      {% block filter %}{% endblock %}
+
+    </div>
+  
+  </div>
+  
+  <div id="sidebarMobilePointer"></div>
+  <div id="sidebarPointer"><div class="sidebar-pointer"></div></div>
+</div>
+
+{% endblock %}
+
+{% block page_content %}
+
+<section id="data-section">
+
+  <div id="page-container">
+
+  {% block data_section_content %}{% endblock %}
+
+  <div id="log-pagination">
+    <table border="0">
+    <form action="{{ pagination['link'] }}" id="pagination-form" method="GET" onSubmit="return $onPaginationFormSubmit(this);">
+    <input type="hidden" name="sidebar" value="" />
+
+    {% block pagination_form %}{% endblock %}
+
+    <tr>
+      <td><div class="caption total_rows">{% block pagination_title %}{% endblock %}:<div class="total" title="{{ pagination['title'] }}">{{ pagination['total'] }} / <span id="total_selected_row" title="{{ _('Total selected') }}">{{ total_selected.split('|')[1] }}</span></div></div></td>
+      <td>
+        <div id="log-page">
+          <dl>
+            <dd id="page:prev" class="pagination auto prev">
+              <a class="page nav {% if pagination['has_prev'] %}enabled{% else %}disabled{% endif %}" href="{{ pagination['link'] }}&page={{ pagination['current_page'] }}&prev=1" title="Назад"> << </a>
+            </dd>
+            <dd id="page:next" class="pagination auto next">
+              <a class="page nav {% if pagination['has_next'] %}enabled{% else %}disabled{% endif %}" href="{{ pagination['link'] }}&page={{ pagination['current_page'] }}&next=1" title="Вперед"> >> </a>
+            </dd>
+            {% for p in pagination['iter_pages'] %}
+              {%- if p == -1 -%}
+            <dd class="pagination spaced disabled">...</dd>
+              {%- else -%}
+            <dd id="page:{{ p }}" class="pagination valid enabled {% if p == pagination['current_page'] %}selected{% endif %}">
+              <a class="page" href="{{ pagination['link'] }}&page={{ p }}">{{ p }}</a>
+            </dd>
+              {%- endif -%}
+            {% endfor -%}
+          </dl>
+        </div>
+      </td>
+      <td>
+        <div id="log-per-page">
+          <div class="caption per_page">{{ _('Page records') }}:</div>
+          <select class="popup" id="per-page" name="per_page" onchange="javascript:$SidebarControl.submit(this.form);">
+          {% for o in pagination['per_page_options'] -%}
+            <option value="{{ o }}" {% if pagination['per_page'] == o %}selected{% endif %}>{{ o }}</option>
+          {%- endfor %}
+          </select>
+        </div>
+      </td>
+
+      {% if pagination['sort']['modes'] %}
+      <td>
+        <div id="log-sortbox">
+          <div class="caption sortbox">{{ _('Order by') }}:</div>
+          <select class="popup" name="sort" onchange="javascript:$SidebarControl.submit(this.form);">
+          {% for value, name in pagination['sort']['modes'] -%}
+            <option value="{{ value }}" {% if pagination['sort']['current_sort'] == value %}selected{% endif %}>{{ name|safe }}</option>
+          {%- endfor -%}
+          </select>
+        </div>
+      </td>
+      {% endif %}
+
+      {% block pagination_icons %}{% endblock %}
+    </tr>
+
+    {% if pagination['today'] %}
+    <tr>
+      <td><div class="caption today">Текущий день:</div></td>
+      <td colspan="10">
+        <table border="0"><tr><td>
+        <div id="log-today">
+          <dl>
+            <dd id="yesterday" class="pagination">
+              <a class="page nav {% if pagination['today']['has_prev'] %}enabled{% else %}disabled{% endif %}" href="{{ pagination['link'] }}&yesterday=1" title="День назад"> << </a>
+            </dd>
+            <dd id="tomorrow" class="pagination">
+              <a class="page nav {% if pagination['today']['has_next'] %}enabled{% else %}disabled{% endif %}" href="{{ pagination['link'] }}&tomorrow=1" title="День вперед"> >> </a>
+            </dd>
+            <dd id="today" class="pagination {% if pagination['today']['selected'] %}selected{% endif %}">
+              <a class="page nav" href="{{ pagination['link'] }}&today=1" title="Заказы за текущий день"> Сегодня </a>
+            </dd>
+          </dl>
+          {% if pagination['today']['date_from'] %}
+          <div class="caption today date_from">{{ pagination['today']['date_from'] }}</div>
+          {% endif %}
+        </div>
+        </td></tr></table>
+      </td>
+    </tr>
+    {% endif %}
+
+    </form>
+    </table>
+
+  </div>
+
+  {% block info_section_content %}{% endblock %}
+
+  </div>
+
+</section>
+
+<section id="footer-section">
+
+  {% block footer %}{% include 'default-footer.html' %}{% endblock %}
+
+</section>
+
+{% endblock %}
+
+{% block schedule_content %}
+
+<script type="text/javascript">
+
+schedule_documents = [{{ schedule_params.get('documents')[0] }}, {{ schedule_params.get('documents')[1] }}];
+schedule_decrees = [{{ schedule_params.get('decrees')[0] }}, {{ schedule_params.get('decrees')[1] }}];
+
+</script> 
+
+<div class="schedule-container" id="documents-schedule-container" title="" style="display:none;">
+  <div class="schedule-caption">
+    <h4>{{ _('Schedule Workflow Documents') }}</h4>
+  </div>
+  <div class="schedule-box" id="documents-schedule-box">
+    <table class="schedule schedule-content" id="documents-schedule-content" border="0">
+    {%- for key, name, items in schedule_template.get('documents') -%} 
+      <tr class="{{ key }}">
+        <td class="status-name">{{ name }}</td>
+      {%- for item in items -%} 
+        <td class="status-value">
+          <div id="{{ item[0][0] }}" class="value {{ item[0][0] }} {{ item[0][2] }}" title="{{ item[0][1] }}">
+            {{ item[1] }}
+          </div>
+        </td>
+      {%- endfor -%}
+      </tr>
+    {%- endfor -%}
+    </table>
+  </div>
+  <div class="command-panel">
+    <button class="btn btn-info" id="schedule-refresh">Обновить</button>
+    <button class="btn btn-info" id="schedule-close">Закрыть</button>
+  </div>
+</div>
+
+<div class="schedule-container" id="decrees-schedule-container" title="" style="display:none;">
+  <div class="schedule-caption">
+    <h4>{{ _('Schedule Workflow Decrees') }}</h4>
+  </div>
+  <div class="schedule-box">
+    <table class="schedule schedule-content" id="decrees-schedule-content" border="0">
+    {%- for key, name, items in schedule_template.get('decrees') -%} 
+      <tr class="{{ key }}">
+      {%- if key == 'separator' -%}
+        <td colspan="{{ items }}"><hr></td>
+      {%- else -%}
+        <td class="status-name">{{ name }}</td>
+        {%- for item in items -%} 
+        <td class="status-value">
+          <div id="{{ item[0][0] }}" class="value {{ item[0][0] }} {{ item[0][2] }}" title="{{ item[0][1] }}">
+            {{ item[1] }}
+          </div>
+        </td>
+        {%- endfor -%}
+      {%- endif -%}
+      </tr>
+    {%- endfor -%}
+    </table>
+  </div>
+</div>
+
+{% endblock %}

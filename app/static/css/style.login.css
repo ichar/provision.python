@@ -1,0 +1,72 @@
+#dataFrame { 
+    margin:0px auto; 
+    width:100%; 
+}
+
+section { float:none; }
+
+div.flash { 
+    margin:20px auto;
+    width:max-content;
+    min-width:50%;
+    padding:20px 40px 20px 40px;
+    white-space:nowrap; 
+}
+
+.middle-header { width:350px !important; margin:0px auto; margin-top:80px; } /* text-align:center !important; */
+
+/*** Login Form  ***/
+
+div.login { 
+    display:grid;
+    background-color:#eeeeee;
+    border:1px solid #800;
+    border-radius:8px;
+    width:280px;
+    margin:0px auto;
+    padding:20px;
+}
+
+div.login label { 
+    display:flex; 
+    font-family: Arial, sans-serif, Helvetica, 'Helvetica Neue', "Segoe UI";
+    font-size:16px; 
+    color:#666;
+}
+div.login label.control-label {
+    font-weight:bold; 
+}
+div.login input[type="text"], div.login input[type="password"] { width:100%; }
+div.login input[type="checkbox"], div.login input[type="radio"] { margin:1px 10px 8px -20px; }
+
+div.login div.checkbox label { font-size:13px; margin-left:14px; }
+div.login p { font-size:11px; margin:10px 0 0 0; }
+
+div.password-rules {
+    background-color:#eeeeee;
+    border:1px solid #888;
+    width:50%;
+    margin:20px auto;
+    padding:20px;
+    text-align:center;
+}
+
+div.password-rules h3 { font-size:14px; text-align:center; color:#a52a2a; }
+div.password-rules h4 { text-align:center; color:#0000ff; }
+
+div.password-rules p { 
+    font-size:12px;
+}
+
+div.password-rules p.extra {
+    font:bold 16px sans;
+}
+
+div.reset { width:340px; }
+div.reset h1, div.message h1 { font-size:14px; margin:0 0 20px 0; }
+
+div.message { width:800px; }
+div.message * { text-align:center; }
+div.message h3 { margin:0; }
+
+div.token { width:100%; text-align:center; font-size:12px; }

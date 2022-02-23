@@ -1,0 +1,87 @@
+{% extends "simple.html" %}
+
+{% from 'templates.html' import render_calculator %}
+
+{% block starter %}
+
+<script src="{{ url_for('static', filename='js/db.controller.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/calculator.default.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/price.js') }}{{ vsc }}"></script>
+
+{% endblock %}
+
+{% block page_content %}
+
+<div class="calculator">
+  <form action="{{ base }}" class="form" id="calculator" method="POST">
+    <input type="hidden" id="command" name="command" value="">
+
+    <div class="top">
+      <div class="bound">
+        <dt>Тираж:</dt>
+        <select id="bound" name="bound">
+          {%- for bound in bounds %}<option value="{{ bound[0] }}">{{ bound[1] }}</option>{% endfor -%}
+        </select>
+      </div>
+      <div class="panel">
+        <div class="sign">
+          <button class="btn btn-primary" id="loc_export">Экспортировать</button>
+          <button class="btn btn-primary" id="reload">Сбросить</button>
+          <button class="btn btn-danger" id="back">Выйти</button>
+          <img id="sign" src="{{ root }}static/img/sign-off.png" title="{{ _('Off') }}" alt="">
+        </div>
+      </div>
+    </div>
+
+    <hr>
+    
+    <table class="data" border="0">
+    <tr><td rowspan="2">
+      <h3>Производство</h3>
+      <div class="section wide" id="manufacture">
+      {%- for item in manufacture -%}
+        {{ render_calculator(item[0], item[1], 0) }}
+      {%- endfor -%}
+
+      {%- for item in antenna -%}
+        {{ render_calculator(item[0], item[1], 0) }}
+      {%- endfor -%}
+      </div>
+    </td><td class="chip">
+      <h3>{{ groups['2'][1] }}</h3>
+      <div class="section narrow" id="chip">
+      <select id="chipbox" name="chip">
+        <option value="">---</option>
+        {%- for item in chip %}<option value="{{ item[0] }}">{{ item[1] }}</option>{% endfor -%}
+      </select>
+      </div>
+    </td></tr>
+    </table>
+  </form>
+
+  <hr>
+
+  <div class="results">
+    <table>
+    <tr>
+      <td><div class="title">Себестоимость:</div></td>
+      <td><div class="title">НДС [{{ tax }}%]:</div></td>
+      <td><div class="title">Наценка [{{ charge }}%]:</div></td>
+      <td><div class="title">ИТОГ [€, {{ euro }}]:</div></td>
+      <td><div class="title">ИТОГ [$, {{ cross }}]:</div></td>
+      <td><div class="title">ИТОГ в Рублях:</div></td>
+    </tr>
+    <tr>
+      <td><div class="sum" id="price">0.000</div></td>
+      <td><div class="sum" id="tax">0.000</div></td>
+      <td><div class="sum" id="charge">0.000</div></td>
+      <td><div class="sum" id="euro">0.000</div></td>
+      <td><div class="sum" id="usd">0.000</div></td>
+      <td><div class="sum" id="rub">0.000</div></td>
+    </tr>
+    </table>
+  </div>
+
+</div>
+
+{% endblock %}

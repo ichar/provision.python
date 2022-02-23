@@ -1,0 +1,162 @@
+{% import 'forms.html' as Forms %}
+
+{% block default_styles %}
+
+<style type="text/css">
+
+img.avatar       { width:{{ avatar_width or '40' }}px; }
+
+</style>
+
+{% endblock %}
+
+{% block header_styles %}
+
+<style type="text/css">
+
+{%- if style['show_scroller'] and is_frame -%}
+
+::-webkit-scrollbar {
+    width:10px;
+}
+
+{%- endif -%}
+
+{%- if style['header'] -%}
+
+#header-content  { width:100%; height:120px; }
+/*
+div.mainmenu     { width:100%; }
+*/
+div.visitor *    { display:inline-block; }
+
+  {%- if style['header'] == 'dark' -%}
+
+div.page-header  { background:rgba(80, 50, 80, 0.8); }
+div.visitor      { background-color:rgba(80, 80, 80, 0.85); color:#eee; } /* 40 80 140  border:4px double #CDD4DC; */
+div.visitor      { background:url("/static/img/sky-dark.jpg") no-repeat; background-size:cover; }
+div.ground       { border:1px solid #CDD4DC; }
+
+.hello           { color:#ed2; }
+
+  {%- else -%}
+
+div.page-header  { background:rgba(120, 50, 80, 0.8); }
+div.visitor      { background-color:rgba(250, 250, 250, 1.0); color:#eee; } /* border:4px double #A4B4C8; */
+div.visitor      { background:url("/static/img/sky-light.jpg") no-repeat; background-size:cover; }
+div.ground       { border:1px solid #A4B4C8; }
+
+.hello           { color:#e2a; }
+
+  {%- endif -%}
+
+div.visitor      { 
+    margin:0px -2px 10px 20px; 
+    padding:3px; 
+    text-align:right;
+    font:normal 14px serif, "Helvetica Neue"; 
+    font-style:normal;
+    float:right;
+}
+
+img.avatar       { margin-top:6px; }
+
+.hello           { 
+    font:bold 1.1em "Segoe UI Web (Cyrillic)", "Segoe UI", -apple-system, BlinkMacSystemFont, "Roboto", "Helvetica Neue", sans-serif;
+    font-style:italic; 
+    padding:1px 5px; 
+    line-height:16px; 
+}
+.username        { font:bold 1.1em Tahoma,Arial; }
+.rolename        { font:bold 1.1em Tahoma,Arial; color:#4024B0; }
+
+{%- else -%}
+
+div.visitor      { 
+    margin:0px -2px 5px 20px; 
+    padding:3px; 
+    text-align:right;
+    font:normal 14px serif, "Helvetica Neue"; 
+    font-style:normal;
+    color:#804040;
+}
+
+img.avatar       { margin-top:2px; }
+
+.hello           { font:bold 13px Helvetica; font-style:italic; }
+.username        { font:bold 13px Tahoma,Arial; }
+.rolename        { font:bold 13px Tahoma,Arial; color:#4024B0; }
+
+{%- endif -%}
+
+div.ground       { padding:20px 20px 10px 20px; }
+
+.noavatar        { padding-bottom:20px !important; }
+
+{%- if manual -%}
+
+div.navigation   { float:right; clear:both; }
+
+{%- endif -%}
+
+</style>
+
+{% endblock %}
+
+<header id="page-header">
+  <div id="header-content" class="{{ header_class }}">
+    <div class="page-header {{ header_subclass }}" id="pageCaption">{{ page_title }}</div>
+  
+  {%- if manual -%}
+
+      <div class="manual" id="manual">
+        <ul>
+          <li><a target="_blank" href="{{ root }}static/docs/user_manual.pdf">Руководство пользователя</a></li>
+          <li><a target="_blank" href="{{ root }}static/docs/work_schedule.pdf">Регламент работ</a></li>
+        </ul>
+      </div>
+
+  {%- endif -%}
+  
+  {%- if navigation -%}
+
+    {%- set noavatar = not avatar -%}
+
+    <div class="navigation">
+
+    {%- if current_user.is_authenticated -%}
+
+      <div class="visitor"><div class="ground {% if noavatar %}noavatar{% endif %}">
+        <span class="hello">Здравствуйте,&nbsp;</span>
+
+      {%- if with_post -%}
+
+        <span class="username">{{ current_user.post }}&nbsp;</span>{% if not noavatar %}<br>{% endif %}
+
+      {%- endif -%}
+
+        <span class="username">{{ current_user.full_name() }}!</span>
+        {# <span class="rolename"> [{{ current_user.role_name }}]</span> #}
+
+      {%- if with_avatar -%}
+
+        {{ avatar|safe }}
+
+      {%- endif -%}
+
+      </div></div>
+
+      <div class="mainmenu" id="mainmenu">
+
+      {{ Forms.form('navigation', 'home', navigation) }}
+
+      </div>
+
+    {%- endif -%}
+
+    </div>
+
+  {%- endif -%}
+
+  </div>
+</header>

@@ -1,0 +1,46 @@
+input[type="checkbox"] { display:none; }
+
+input[type="checkbox"] ~ div { 
+    display:inline-block; 
+    margin:3px 0 0 7px !important; 
+    padding:0; 
+}
+
+input[type="checkbox"] ~ div { width:90%; }
+
+input[type="checkbox"] + span { 
+    display:inline-block; 
+    width:20px; 
+    height:20px; 
+    margin-left:-3px; 
+    vertical-align:top; 
+    cursor:pointer; 
+}
+
+input[type="checkbox"] + span { background:url(skins/enabled_notSelcb.png) left top no-repeat; }
+input[type="checkbox"]:checked + span { background:url(skins/enabled_isSelcb.png) left top no-repeat; }
+input[type="checkbox"]:disabled + span { background:url(skins/disabled_notSelcb.png) left top no-repeat; }
+input[type="checkbox"]:disabled:checked + span { background:url(skins/disabled_isSelcb.png) left top no-repeat; }
+
+input[type="radio"] { display:none; }
+
+input[type="radio"] ~ div { 
+    display:inline-block; 
+    margin:3px 0 0 7px !important; 
+    padding:0; 
+}
+
+input[type="radio"] ~ div { width:90%; }
+
+input[type="radio"] + span { 
+    display:inline-block; 
+    width:20px; height:20px; 
+    margin-left:-3px; 
+    vertical-align:top; 
+    cursor:pointer; 
+}
+
+input[type="radio"] + span { background:url(skins/enabled_notSelRB.png) left top no-repeat; }
+input[type="radio"]:checked + span { background:url(skins/enabled_isSelRB.png) left top no-repeat; }
+input[type="radio"]:disabled + span { background:url(skins/disabled_notSelRB.png) left top no-repeat; }
+input[type="radio"]:disabled:checked + span { background:url(skins/disabled_isSelRB.png) left top no-repeat; }

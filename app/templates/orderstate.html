@@ -1,0 +1,171 @@
+﻿{% extends "common.html" %}
+
+{% import 'forms.html' as Forms %}
+
+{% block starter %}
+
+<script src="{{ url_for('static', filename='js/db.controller.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/log.default.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/orderstate.min.js') }}{{ vsc }}"></script>
+
+{% endblock %}
+
+{% block data_section_content %}
+
+  {{ Forms.lines('orderstate-orders', orders, config) }}
+
+{% endblock %}
+
+{% block info_section_content %}
+
+  <div class="data-menu block">
+    <div class="menu selected" id="data-menu-events">События</div>
+    <!-- Addon menu -->
+    <div class="menu" id="data-menu-files">Файлы</div>
+    <div class="menu" id="data-menu-errors">Ошибки</div>
+    <div class="menu" id="data-menu-certificates">Сертификаты</div>
+    <div class="menu" id="data-menu-aliases">Алиасы</div>
+    <div class="menu" id="data-menu-log">Файловый журнал</div>
+  </div>
+
+  <div id="info-container">
+    <div class="view-content" id="subline-content">
+      <div class="cell p50"><div id="subline-data">
+        <h3>Хронология событий пакета <span class="filename" id="subline_name">{{ current_file[1] }}</span>:</h3>
+
+        {{ Forms.sublines('orderstate-events', events, config) }}
+        
+      </div></div><div class="cell p50"><div id="info-data" style="display:none;">
+        <h3>Информация о событии ID <span class="filename" id="ex_data">{{ current_file[3] }}</span>:</h3>
+        <div class="view-container inline" id="EXDATA"></div>
+      </div>
+    </div></div>
+
+    <div class="view-content tab" id="subline-content" style="display:none;">
+      <h3>Журнал событий пакета <span class="filename">{{ current_file[1] }}</span>:</h3>
+      <div class="view-container" id="events-container"></div>
+    </div>
+
+    <div class="view-content tab" id="files-content" style="display:none;">
+      <h3>Файлы пакета <span class="filename">{{ current_file[1] }}</span>:</h3>
+      <div class="view-container" id="files-container"></div>
+    </div>
+
+    <div class="view-content tab" id="errors-content" style="display:none;">
+      <h3>Ошибки пакета <span class="filename">{{ current_file[1] }}</span>:</h3>
+      <div class="view-container" id="errors-container"></div>
+    </div>
+
+    <div class="view-content tab" id="certificates-content" style="display:none;">
+      <h3>Информация о сертификатах пакета <span class="filename">{{ current_file[1] }}</span>:</h3>
+      <div class="view-container" id="certificates-container"></div>
+    </div>
+
+    <div class="view-content tab" id="aliases-content" style="display:none;">
+      <h3>Алиасы клиента <span class="filename">{{ current_file[1] }}</span>:</h3>
+      <div class="view-container" id="aliases-container"></div>
+    </div>
+
+    <div class="view-content tab" id="log-content" style="display:none;">
+      <h3>Журнал инфообмена для файла <span class="filename">{{ current_file[1] }}</span>:</h3>
+      <div class="view-container" id="log-container"></div>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block pagination_title %}Заказов / карт{% endblock %}
+
+{% block pagination_form %}
+
+    <input type="hidden" id="page" name="page" value="" />
+    <input type="hidden" name="client" value="{{ args['client'][1] }}" />
+    <input type="hidden" name="action" value="{{ args['action'][1] }}" />
+    <input type="hidden" name="config" value="{{ args['config'][1] }}" />
+    <input type="hidden" name="type" value="{{ args['type'][1] }}" />
+    <input type="hidden" name="date_from" value="{{ args['date_from'][1] }}" />
+    <input type="hidden" name="date_to" value="{{ args['date_to'][1] }}" />
+    <input type="hidden" id="order_id" name="order_id" value="{{ current_file[0] }}" />
+    <input type="hidden" id="event_id" name="event_id" value="{{ current_file[2] }}">
+    <input type="hidden" id="searched" name="search" value="{{ search }}">
+
+{% endblock %}
+
+{% block filter %}
+
+  <div id="log-filter" class="orderstate-filter common-filter">
+    <form action="{{ pagination['link'] }}" id="filter-form" method="POST">
+
+    <input type="hidden" name="page" value="{{ pagination['current_page'] }}">
+    <input type="hidden" name="per-page" value="{{ pagination['per_page'] }}">
+    <input type="hidden" id="order_id" name="order_id" value="{{ current_file[0] }}">
+    <input type="hidden" id="event_id" name="event_id" value="{{ current_file[2] }}">
+    <input type="hidden" id="searched" name="search" value="{{ search }}">
+    <input type="hidden" id="sort" name="sort" value="{{ pagination['sort']['current_sort'] }}">
+    <input type="hidden" id="position" name="position" value="{{ pagination['position'] }}">
+    <input type="hidden" id="sidebar" name="sidebar" value="{{ sidebar['state'] }}">
+    <input type="hidden" id="errors" value="{{ errors }}">
+    <input type="hidden" id="OK" value="{{ OK }}">
+    <input type="hidden" id="command" name="command" value="">
+
+    <dt><div class="caption client">Клиент:</div></dt>
+    <dd>
+        <select class="orderstatefilter field popup" id="client" name="client" onchange="MakeFilterSubmit(0)">
+          {% for client in clients -%}
+            <option value="{{ client[0] }}" {% if args['client'][1] == client[0] %}selected{% endif %}>{{ client[1] }}</option>
+          {%- endfor %}
+        </select>
+    </dd>
+
+    <dt><div class="caption type">Тип обмена:</div></dt>
+    <dd>
+        <select class="field popup" id="type" name="type" onchange="MakeFilterSubmit(1)">
+          {% for type in types -%}
+            <option value="{{ type }}" {% if args['type'][1] == type %}selected{% endif %}>{{ type }}</option>
+          {%- endfor %}
+        </select>
+    </dd>
+
+    <dt><div class="caption config">Сценарий:</div></dt>
+    <dd>
+        <select class="orderstatefilter field popup" id="config" name="config" onchange="MakeFilterSubmit(2)">
+          {% for config in configs -%}
+            <option value="{{ config[0] }}" {% if args['config'][1] == config[0] %}selected{% endif %}>{{ config[1] }}</option>
+          {%- endfor %}
+        </select>
+    </dd>
+
+    <dt><div class="caption action">Операция:</div></dt>
+    <dd>
+        <select class="orderstatefilter field popup" id="action" name="action" onchange="MakeFilterSubmit(3)">
+          {% for action in actions -%}
+            <option value="{{ action[0] }}" {% if args['action'][1] == action[0] %}selected{% endif %}>{{ action[1] }}</option>
+          {%- endfor %}
+        </select>
+    </dd>
+
+    <dt><div class="caption order-date">Дата загрузки c:</div></dt>
+    <dd>
+        <input class="field date" type="date" id="order-date-from" name="date_from" value="{{ args['date_from'][1] }}" onchange="MakeFilterSubmit(4)">
+    </dd>
+
+    <dt><div class="caption order-date">по:</div></dt>
+    <dd>
+        <input class="field date" type="date" id="order-date-to" name="date_to" value="{{ args['date_to'][1] }}" onchange="MakeFilterSubmit(5)">
+    </dd>
+
+    <dt><div class="caption state">Условие отбора:</div></dt>
+    <dd>
+        <select class="orderstatefilter field popup" id="state" name="state" onchange="MakeFilterSubmit(6)">
+          {% for state in states -%}
+            <option value="{{ state[0] }}" {% if args['state'][1] == state[0] %}selected{% endif %}>{{ state[1] }}</option>
+          {%- endfor %}
+        </select>
+    </dd>
+
+    </form>
+  </div>
+
+{% endblock %}
+
+

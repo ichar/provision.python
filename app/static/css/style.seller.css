@@ -1,0 +1,175 @@
+body { background-color:#333; margin:20px auto; padding-left:20px; padding-right:20px; }
+
+section { display:block !important; width:100%; }
+
+.ui-dialog { z-index:1000; }
+
+div.flash {
+    background-color:#CC2E2C; 
+    border:2px solid #fff;
+    color:white;
+    font:normal 18px Arial;
+    text-align:center;
+}
+
+#page-section {
+    border-bottom:1px solid #eeeeee;
+    margin-bottom:40px;
+}
+
+#page-container {
+    margin-bottom:20px;
+}
+
+#page-header {
+    margin:20px 0 0 0;
+}
+
+.caption-container {
+    background-color:#333;
+    display:block;
+    font:normal 32px "Helvetica Neue", "Lucida Grande", Arial;
+    color:yellow;
+
+    padding-bottom:0px;
+    border-bottom:5px solid #CECE6C;
+    padding-top:10px;
+    margin-bottom:10px;
+
+    transition:transform 600ms ease;
+    will-change:transform;
+    opacity:1.0;
+    z-index:500;
+}
+
+.fixed {
+    position:fixed;
+}
+
+.caption-container h1 {
+    background-color:#7474d8;
+    color:white;
+    padding:0 20px 0 20px;
+    width:fit-content;
+    font-size:20px;
+
+    width:-moz-fit-content;
+}
+
+.nodata {
+    background-color:#c22040; /* blueviolet  */
+    color:white;
+    width:200px;
+    text-align:center;
+    font-size:18px;
+    margin:20px auto;
+    padding:10px;
+}
+
+.caption-name * { display:inline-block; }
+.caption-buttons { padding:10px; }
+
+.header { margin-bottom:20px; margin-top:10px; }
+.header div { display:inline-block; }
+.header p { font-size:12px; color:#caa22c; margin:0; }
+
+div.header .address { max-width:60%; }
+
+div.header .sum_price {
+    color:#d2d260;
+    border:1px solid white;
+    padding:12px;
+    font-size:14px;
+    float:right;
+    text-align:center;
+    margin-bottom:20px;
+}
+
+#line-content { text-align:left; }
+
+table.lines, tr.line { width:100%; }
+
+.line { 
+    display:inline-flex;
+    margin-bottom:10px;
+}
+
+.np          { min-width:30px; width:20px; }
+.Article     { width:100%; }
+.Qty         { min-width:50px; }
+.Subdivision { min-width:20%; width:20%; }
+.Sector      { min-width:20px; }
+.Price       { min-width:80px; }
+.Currency    { width:40px; min-width:30px; text-align:center; }
+.Total       { min-width:100px; width:12%; font-size:16px; white-space:nowrap; }
+
+.num { 
+    font-size:14px; 
+}
+.Price, .Total { 
+    text-align:right; 
+}
+.Qty {
+    text-align:center;
+}
+
+.info { 
+    font-size:12px;
+    color:#c1dacd;
+}
+
+.info dt { 
+    font-weight:bold;
+    color:#a59a7c;
+    width:150px; 
+}
+
+.info dd { padding-right:40px; }
+
+div.info-container .equipment_title { color:#ffffff; }
+div.info-container .stocklist { font-weight:bold; cursor:pointer; color:#b248c6; }
+div.info-container .price { color:#deda64; font-size:14px; }
+div.info-container .sector { color:#8c81df; }
+
+/*** Seller Form  ***/
+
+#seller-confirm-container .updateseller { background-color:rgba(180, 140, 90, 0.1); }
+
+#seller-confirm-container .common-box { padding:10px; }
+#seller-box {
+    padding:10px;
+    overflow-x:hidden;
+    overflow-y:auto;
+}
+
+div.seller-item dd, div.seller-item dt { display:inline-block; } 
+div.seller-item { margin:0; }
+div.seller-item dt { width:160px; }
+div.seller-item input { margin:0px; }
+div.seller-item textarea { margin:0px; line-height:18px; height:120px; width:500px; }
+div.seller-item select { max-width:514px; }
+
+.seller-item #name    { width:500px; }
+.seller-item #code    { width:100px; text-align: center; }
+.seller-item #title   { height:88px; font-family:monospace; font-size:14px; }
+.seller-item #address { height:54px; }
+.seller-item #contact { height:54px; }
+.seller-item #url     { height:52px; }
+.seller-item #phone   { width:500px; }
+.seller-item #email   { width:500px; }
+
+.inline { margin:10px 0 10px 0; }
+/*
+.inline dt, .inline dd { display:inline-block; }
+*/
+.address .inline * { display:inline-block; }
+.address .inline dt, 
+.address .inline dd { font-size:12px; vertical-align:top; }
+.address .inline dt { color:#ad6660; }
+.address .inline dd { margin-left:5px; }
+
+.address .link a { color:#369cd0; }
+
+.stocklist a:active { color:#88f; }
+.stocklist a:hover { color:#88f; }
+.stocklist a:visited { color:#88f; }

@@ -1,0 +1,15 @@
+If you created a new repository nowadays(2020) then the default branch is main on GitHub.
+
+you can check on GitHub now in your repository branches.
+
+and you can also check branch on the terminal by running the command:
+
+git branch
+
+so that's why you need to run
+
+git push origin main
+
+instead of
+
+git push origin master

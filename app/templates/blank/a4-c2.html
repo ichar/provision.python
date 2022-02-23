@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta name="viewport" content="width=1280">
+<meta name="author" content="A4 DocBlank Printing">
+<title>{{ title }}</title>
+<link href="{{ url_for('static', filename='css/style') }}.a4.css{{ vsc }}" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<div class="html-container">
+    
+<header class="header">
+
+  <div class="top"><img class="rosan" src="/static/img/rosan-new-color.png"></div>
+  <div class="top rosan">
+    <pre>
+Непубличное Акционерное Общество «РОЗАН ФАЙНЭНС»
+Юридический (фактический) адрес: 143090, Московская область, г. Краснознаменск, ул. Связистов, д. 9/4
+ИНН 7705024010, КПП 500601001, ОКПО 40286398, ОГРН 1027700143448
+Р/С 40702810100080000236 в ОАО Банк ВТБ К/С 30101810700000000187, БИК 044525187</pre>
+  </div>
+
+</header>
+
+<div class="caption">
+
+  <h1>{{ category }}</h1>
+  <div class="order">
+    <table border=0><tr><td class="date">{{ date }} г.</td><td class="location">{{ location }}</td><td class="number">№ {{ number }} </td></tr></table>
+  </div>
+  <h2>«{{ title }}»</h2>
+  <p>{{ preface|safe }}</p>
+
+</div>
+
+<div class="content-block">
+
+  <div class="items">
+
+{{ content|safe }}
+
+  </div>
+
+  <div class="other">
+
+{{ other|safe }}
+
+  </div>
+
+</div>
+
+<div class="sign {{ signing }}">
+
+  <div class="">
+    <table border=0><tr>
+      <td class="post"><h2>{{ post|safe }}</h2></td>
+      <td class="facsimile">{% if facsimile %}<img class="rosan" src="/static/facsimile/{{ facsimile }}">{% endif %}</td>
+      <td class="person {{ signing }}"><h2>{{ person }}</h2></td>
+    </tr></table>
+  </div>
+
+</div>
+
+<footer>
+
+  <div class="bottom"><img class="rosan" src="/static/img/footer.png"></div>
+  <div class="footer">
+    <table border=0>
+    <tr>
+      <td class="p1">
+<p><span class="company">РОЗАН ФАЙНЭНС</span></p>
+<p><span class="address">143090, Московская область, г. Краснознаменск, ул. Связистов, д. 9/4</span></p>
+        </p>
+      </td>
+      <td class="p2">
+        <pre>
+Тел:  +7 (495) 933-8505
+Факс: +7 (495) 933-6510
+        </pre>
+      </td>
+      <td class="p3">
+        <pre>
+www.rosan.ru
+info@rosan.ru
+        </pre>
+      </td>
+    </tr>
+    </table>
+  </div>
+
+</footer>
+
+</div>
+
+<script type="text/javascript">
+<!--
+// Core definitions
+// ----------------
+
+//-->
+</script> 
+
+</body>
+</html>

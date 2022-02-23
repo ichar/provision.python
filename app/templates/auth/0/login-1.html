@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% import 'items.html' as Items %}
+
+{% block styles %}
+
+  {%- if is_mobile -%}
+
+<link href="{{ url_for('static', filename='css/style') }}.login.mobile.css{{ vsc }}" rel="stylesheet" type="text/css">
+
+  {%- else -%}
+
+<link href="{{ url_for('static', filename='css/style') }}.login.css{{ vsc }}" rel="stylesheet" type="text/css">
+
+  {%- endif -%}
+
+{% endblock %}
+
+{% block starter %}
+
+<script src="{{ url_for('static', filename='js/login.js') }}{{ vsc }}"></script>
+
+{% endblock %}
+
+{% block title %}WebBankPerso Login{% endblock %}
+
+{% block page_content %}
+
+<div class="login">
+
+  <form action="" method="post" class="form" role="form">
+    <div style="display:none;"><input id="csrf_token" name="csrf_token" type="hidden" value="None"></div>
+
+    <div class="form-group required">
+      <label class="control-label" for="login">Логин:</label>
+      <input class="form-control" id="login" name="login" required type="text" value="">
+    </div>
+    <div class="form-group required">
+      <label class="control-label" for="password">Пароль:</label>
+      <div class="input-group">
+        <input class="form-control" id="password" name="password" required type="password" value="">
+        <div class="input-group-addon" id="s-h-pass"><span class="glyphicon glyphicon-eye-open" title="Показать пароль"></span></div>
+      </div>
+    </div>
+    <div class="checkbox">
+      <label><input checked="" id="remember_me" name="remember_me" type="checkbox" value="y">Сохранять подключение</label>
+    </div>
+    <input class="btn btn-default" id="submit" name="submit" type="submit" value="Войти">
+  </form>
+
+  <br>
+  <p>{{ _('Do you wish to change password?') }} <a href="{{ url_for('auth.change_password') }}">{{ _('Click here') }}</a>.</p>
+</div>
+
+{% endblock %}

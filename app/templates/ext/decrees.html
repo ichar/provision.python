@@ -1,0 +1,241 @@
+{% extends "simple.html" %}
+
+{% import 'items.html' as Items %}
+
+{% block styles %}
+
+<link href="{{ url_for('static', filename='css/pikaday/pikaday.css') }}" rel="stylesheet" type="text/css">
+
+<style type="text/css">
+
+::-webkit-scrollbar {
+    width: 10px !important;
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(200, 200, 200, 0.5) !important;
+}
+
+</style>
+
+{% endblock %}
+
+{% block starter %}
+
+<script type="text/javascript">
+
+var selected_date = '{{ date }}';
+var selected_columns = '{{ registry["selected_columns"] }}';
+var forward = '{{ forward }}';
+var back = '{{ back }}';
+var app_role_ceo = {{ app_role_ceo }};
+
+</script> 
+
+<script src="{{ url_for('static', filename='js/db.controller.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/decrees.dialogs.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/scroll.caption.min.js') }}{{ vsc }}"></script>
+
+<script src="{{ url_for('static', filename='js/decrees.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/reports.min.js') }}{{ vsc }}"></script>
+
+<script src="{{ url_for('static', filename='js/pikaday.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/pikaday.jquery.min.js') }}"></script>
+
+{%- set selected_columns = registry['selected_columns'] -%}
+
+{% endblock %}
+
+{% block header %}
+
+{% include 'simple-header.html' %}
+
+{% endblock %}
+
+{% block page_content %}
+
+<div class="ext-page" id="page-container">
+  <div class="caption-container" id="caption">
+    <input type="hidden" id="OK" name="OK" value="{{ OK }}">
+
+    <div class="history">
+      <div class="back" id="history:back" title="{{ _('Go back') }}"><<</div>
+      <div class="forward" id="history:forward" title="{{ _('Go forward') }}">>></div>
+    </div>
+
+    <div class="caption">{{ _('Decrees List') }}</div>
+    <div class="caption-name">
+      <table border="0">
+      <tr>
+      <td><h1>{{ attrs['rendered_name']|safe }}</h1></td>
+      <!--</tr><tr>-->
+      <td>
+      <div class="decrees-box common-panel">
+        <form class="common-form" id="refresh-form" method="POST">
+        <div class="decree-item common-next">
+
+          {{ Items.selected_combo('executors', 'executors', executors, 'caption executors', '', args.get('executor'), 0,0, _('Executors')) }}
+
+        </div>
+        <div class="decree-item common-next">
+
+          {{ Items.selected_combo('statuses', 'statuses', statuses, 'caption statuses', '', args.get('status'), 0,0, _('Decree statuses')) }}
+
+        </div>
+        </form>
+      </div>
+      <div class="caption-buttons">
+    {% if not is_mobile %}
+        <button class="btn btn-primary" id="decrees:print">Печать</button>
+    {% endif %}
+        <button class="btn btn-primary" id="decrees:sort" title="Срок исполнения поручений">Сортировка</button>
+    {%- if page_menu -%}
+      {% for item in page_menu %}
+        <button class="btn btn-{{ item[3] }}" href="{{ item[2] }}" id="decrees:{{ item[0] }}">{{ item[1] }}</button>
+      {% endfor %}
+        <button class="btn btn-danger" id="decrees:reset">Обновить</button>
+    {%- endif -%}
+      </div>
+      </td></tr></table>
+    </div>
+
+    <div class="header">
+      <div class="address">
+        <p>{{ _('Review Details') }}: {{ attrs['details'] }}</p>
+        <p>{{ _('Company') }}: {{ attrs['company'] }}</p>
+        <a href="" id="calendar">{{ _('Decrees Calendar') }}</a>
+      </div>
+
+      <div class="sum_total">{{ sum_total|safe }}</div>
+    </div>
+  </div>
+
+  <div class="view-container" id="line-content">
+    <form action="{{ action }}" class="common-form" id="decrees-form" method="POST" enctype="multipart/form-data">
+      <input type="hidden" id="command" name="command" value="">
+
+    <table class="lines" border="0">
+  {% for decree in decrees -%}
+    {%- set id = decree['id'] -%}
+    {%- set status = decree['status'] -%}
+    {%- set disabled = decree['disabled'] -%}
+    {%- set is_accepted = decree['is_accepted'] -%}
+    {%- set line_index = loop.index -%}
+
+    <tr class="line" id="row-line:{{ id }}:{{ line_index }}">
+    {%- for column in columns -%}
+      <td class="column {{ column }} {{ decree['classes'].get(column, '') }}" title="{{ titles[id][column] }}">{{ decree[column] }}</td>
+    {%- endfor -%}
+    </tr>
+
+    {%- set is_author = items[id]['is_author'] -%}
+    {%- set is_executor = items[id]['is_executor'] -%}
+
+    <tr>
+      <td colspan="{{ columns|length }}">
+      <div class="info-container {{ states[0] }}" id="info:{{ id }}:{{ line_index }}">
+        <input type="hidden" id="{{ id }}_decree_author" value="{{ items[id].get('author') }}">
+        <input type="hidden" id="{{ id }}_decree_executor" value="{{ items[id].get('executor') }}">
+        <input type="hidden" id="{{ id }}_is_author" value="{{ items[id].get('is_author') }}">
+        <input type="hidden" id="{{ id }}_is_executor" value="{{ items[id].get('is_executor') }}">
+
+        <table class="info" border="0">
+      {%- for key in keys -%}
+        {%- set control = controls[id].get(key) -%}
+          <tr><td><dt>{{ headers[key]['title'] }}:</dt></td><td class="{{ headers[key]['class'] }}">
+          {% if control == 1 and (is_author or is_executor) and not disabled %}
+            <div class="decree_{{ key }}">
+              <textarea id="item_{{ id }}_{{ key }}">{{ items[id][key] }}</textarea>
+              <div class="caption-buttons" id="buttons:{{ id }}:{{ line_index }}">
+              {% if is_author %}
+                <button class="btn btn-primary finish" id="action:finish:{{ id }}:{{ key }}:{{ line_index }}" {{ disabled }}>Исполнено</button>
+                <button class="btn btn-primary reject" id="action:reject:{{ id }}:{{ key }}:{{ line_index }}" {{ disabled }}>Отменено</button>
+              {% endif %}
+              {% if is_executor and not is_accepted %}
+                <button class="btn btn-primary accept" id="action:accept:{{ id }}:{{ key }}:{{ line_index }}">Принято к исполнению</button>
+              {% endif %}
+              {% if is_author or is_executor %}
+                <button class="btn btn-primary save" id="action:save:{{ id }}:{{ key }}:{{ line_index }}" disabled>Сохранить</button>
+              {% endif %}
+              <div>
+            <div>
+          {% else %}
+            <dd id="item_{{ id }}_{{ key }}">{{ items[id][key]|safe }}</dd>
+          {% endif %}
+          </td></tr>
+      {%- endfor -%}
+        </table>
+      </div>
+      </td>
+    </tr>
+
+  {%- endfor -%}
+    </table>
+
+  {%- if not decrees -%}
+    <div class="nodata">{{ _('No data') }}</div>
+  {%- endif -%}
+
+    </form>
+  </div>
+</div>
+
+<form action="" id="filter-form" method="POST"></form>
+
+{% endblock %}
+
+{% block dialogs_content %}
+
+<div class="common-dialog" id="selectdate-confirm-container" title="{{ _('Select Decrees Date form') }}" style="display:none;">
+  <h3>{{ _('You can select the decrees date from.') }}</h3>
+  <div class="common-confirmation">
+    <h4>{{ _('Select decrees date format see in the application documentation.') }}</h4>
+    <div class="common-box common-panel selectdate-context">
+      <input class="string" id="selectdate" name="selectdate" type="hidden">
+      <div id="selectdate_box"></div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block final_scripts %}
+
+<script type="text/javascript">
+/*
+var date = new Date();
+var now = date.getToday().split('-');
+
+alert(now);
+*/
+var $datepicker = $('#selectdate').pikaday({
+  firstDay: 1,
+  bound: false,
+  //minDate: new Date(int(now[0]), int(now[1]), int(now[2])),
+  minDate: new Date(2020, 01, 01),
+  maxDate: new Date(2030, 12, 31),
+  yearRange: [2020,2030],
+  disableWeekends:false,
+  format: 'YYYY/M/D',
+  toString(date, format) {
+      // you should do formatting based on the passed format,
+      // but we will just return 'D/M/YYYY' for simplicity
+      const day = date.getDate();
+      const month = date.getMonth() + 1;
+      const year = date.getFullYear();
+      return `${day}.${month}.${year}`;
+  },
+  parse(dateString, format) {
+      // dateString is the result of `toString` method
+      const parts = dateString.split('.');
+      const day = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10) - 1;
+      const year = parseInt(parts[2], 10);
+      return new Date(year, month, day);
+  },
+  onSelect: function (date) {},
+  container: document.getElementById('selectdate_box')
+});
+
+</script>
+
+{% endblock %}

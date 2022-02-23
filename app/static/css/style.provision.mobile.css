@@ -1,0 +1,45 @@
+
+/*** Provision View  ***/
+
+div.provision-container h3 { line-height:16px; width:100%; } /* white-space:nowrap; */
+div.provision-container #MAINDATA { min-width:680px; }
+
+table.provision-orders td._total { min-width:110px; width:110px; }
+
+#review-info-data { margin-left:10px; }
+#review_area div.review { margin:0; padding:10px; border:1px solid #aaa; }
+#review_area textarea.review_note  { margin:0px; line-height:20px; height:80px; max-width:700px; }
+
+#dates-area { margin:-1px 0; }
+
+#statuses-data-buttons { margin: 0 26px 0 26px; }
+
+div.view-container .data-buttons-inline button { 
+    width:143px;
+}
+
+div.view-container .data-buttons-last {
+    margin-left:-2px !important;
+}
+
+div.provision-container .filename .EUR span { 
+    display:-webkit-inline-box;
+    max-width:650px;
+    text-align:center;
+}
+
+tr.union td { padding:40px; }
+
+div.row-unreads { padding:20px; font:bold 16px Arial,Tahoma,"Lucida Grande"; }
+div.row-unreads span { padding:5px; font-size:16px; color:yellow; }
+
+.urgently::before {
+    padding:3px 5px 1px 5px;
+    font-size:9px;
+}
+
+#paid-panel {
+    padding:10px 20px;
+}
+
+#paid-panel div { padding-top:0px; }

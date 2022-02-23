@@ -1,0 +1,44 @@
+{% extends "simple.html" %}
+
+{% block title %}Flasky - Confirm your account{% endblock %}
+
+{% block styles %}
+
+<style type="text/css">
+
+div.flash { margin:20px !important; min-width:480px; }
+
+</style>
+
+{% endblock %}
+
+{% block starter %}
+
+<script type="text/javascript">
+
+var page_is_focused = 0;
+
+var $SidebarDialog = null;
+
+</script> 
+
+{% endblock %}
+
+{% block page_content %}
+
+<div class="unconfirmed">
+    <h1>
+        Hello, Stranger!
+    </h1>
+    <h3>You have not confirmed your account yet.</h3>
+    <p>
+        Before you can access this site you need to confirm your account.
+        Check your inbox, you should have received an email with a confirmation link.
+        Please, go back. Welcome!
+    </p>
+
+    <br>
+    <p>{{ _('Return to the Login page') }}: <a href="{{ url_for('auth.login') }}">{{ _('Click here') }}</a>.</p>
+</div>
+
+{% endblock %}

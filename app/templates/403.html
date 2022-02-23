@@ -1,0 +1,27 @@
+{% extends "simple.html" %}
+
+{% block title %}WebPerso Forbidden{% endblock %}
+
+{% block starter %}
+
+<script type="text/javascript">
+
+alert('W:'+$_width('screen-max')+':'+$_width('screen-min')+':'+$_width('max')+':'+$_width('min'));
+//alert('H:'+$_height('screen-max')+':'+$_height('screen-min')+':'+$_height('max')+':'+$_height('min')+':'+$_height('available'));
+
+</script> 
+
+{% endblock %}
+
+{% block page_content %}
+
+<div class="page-header">
+    <div class="error">
+    
+      {#<h1>{{ message }}</h1>#}
+      <img src="{{ root }}static/img/403-error.png">
+
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,62 @@
+body { margin:0 auto; }
+
+#flash-section {}
+
+div.flash { 
+    margin:0px auto;
+    width:50%;
+    padding:20px 40px 20px 40px;
+    white-space:nowrap; 
+    margin-bottom:10px;
+}
+
+div.visitor { 
+    margin-top:0px;
+}
+
+div.history { font-size:26px; }
+div.back, div.forward { border-radius:36px; }
+
+
+/*** Design Controls Size  ***/
+
+div.ui-widget-content .ui-button-text-only .ui-button-text { font-size:16px; width:inherit; }
+
+#page-container .menu, div.navigation a.mainmenu { font-size:14px; }
+
+div.dropdown-container .dropdown-link { font-size:14px; }
+
+#html-container select.popup { font-size:16px; height:35px; }
+
+#html-container input.field { font-size:16px; padding-top:5px; padding-bottom:5px; }
+
+#page-container button { font-size:18px; height:40px; }
+
+div.dropdown-container button.btn { font-size:18px; padding-top:6px; padding-bottom:6px; }
+
+div.view-container .data-buttons { padding:0; }
+
+div.view-container .data-buttons button { 
+    display:inline-block; 
+    margin:10px 3px 10px 3px;
+    padding:8px 16px 8px 16px;
+}
+
+#sidebarMobilePointer { 
+    background-color: #4c555a;
+    border-top:1px dotted #646464; /* #484848 */
+    border-bottom:1px dotted #646464;
+    border-left:1px dotted #888;
+    border-right:1px dotted #888;
+    position:fixed;
+    width:46px;
+    top:80px;
+    z-index:30;
+}
+
+div.header { margin-bottom:20px; }
+div.header .address { max-width:700px; }
+div.header .sum_price { font-size:20px; padding-left:20px; padding-right:20px; }
+
+div.caption-name td { vertical-align:inherit; }
+div.decrees-box select { padding:0; margin:0; }

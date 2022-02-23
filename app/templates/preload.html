@@ -1,0 +1,237 @@
+﻿{% extends "base.html" %}
+
+{% block styles %}{% endblock %}
+
+{% block starter %}
+
+<script src="{{ url_for('static', filename='js/db.controller.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/log.default.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/preload.js') }}{{ vsc }}"></script>
+
+{% endblock %}
+
+{% block header %}{% include 'default-header.html' %}{% endblock %}
+
+{% block data_section_content %}
+
+  <div class="view-container" id="line-content">
+    <table class="view-data preloads" border="1">
+    <thead>
+    <tr>
+    {%- for column in config['preloads']['columns'] -%}
+      <td class="column header {{ column }}">{{ config['preloads']['headers'][column] }}</td>
+    {%- endfor -%}
+    </tr>
+    </thead>
+
+    {% for row in preloads -%}
+    <tr class="line {{ row['selected'] }} {{ loop.cycle('odd', 'even') }}" id="{{ row['id'] }}">
+      {%- for column in config['preloads']['columns'] -%}
+        {% if row['Error'] %}
+      <td class="column error">{{ row[column]|safe }}</td>
+        {% elif row['Ready'] %}
+      <td class="column ready">{{ row[column]|safe }}</td>
+        {% else %}
+      <td class="column">{{ row[column]|safe }}</td>
+        {% endif %}
+      {%- endfor -%}
+    </tr>
+    {%- endfor %}
+    {%- if not preloads -%}
+    <tr>
+      <td colspan="{{ config['preloads']['columns']|length }}"><div class="nodata">{{ _('No data') }}!</div></td>
+    </tr>
+    {%- endif -%}
+    </table>
+  </div>
+
+{% endblock %}
+
+{% block info_section_content %}
+
+  <div class="data-menu block">
+    <div class="menu selected" id="data-menu-articles">Резервы</div>
+  {% if current_user.is_administrator() %}
+    <div class="menu" id="data-menu-preloadlog">Файловый журнал ToSDC</div>
+  {% endif %}
+  </div>
+
+  <div id="info-container">
+    <div class="view-content" id="subline-content">
+      <div class="p50">
+        <h3>Резервы по файлу <span class="filename">{{ current_file[1] }}</span>:</h3>
+        <div class="view-container inline p100">
+          <table class="view-data p100" border="1">
+          <thead>
+          <tr>
+          {%- for column in config['articles']['columns'] -%}
+            <td class="column header {{ column }}">{{ config['articles']['headers'][column] }}</td>
+          {%- endfor -%}
+          </tr>
+          </thead>
+
+          {% for row in articles -%}
+          <tr class="subline {{ row['selected'] }} {{ loop.cycle('odd', 'even') }}" id="{{ row['id'] }}">
+            {%- for column in config['articles']['columns'] -%}
+              {% if row['Found'] %}
+            <td class="column found">{{ row[column]|safe }}</td>
+              {% elif row['Ready'] %}
+            <td class="column ready">{{ row[column]|safe }}</td>
+              {% elif row['Error'] %}
+            <td class="column error">{{ row[column]|safe }}</td>
+              {% else %}
+            <td class="column">{{ row[column]|safe }}</td>
+              {% endif %}
+            {%- endfor -%}
+          </tr>
+          {%- endfor %}
+          {%- if not articles -%}
+          <tr><td colspan="{{ config['articles']['columns']|length }}"><div class="nodata">{{ _('No data') }}!</div></td></tr>
+          {%- endif -%}
+          </table>
+        </div>
+      </div>
+    </div>
+
+  {% if current_user.is_administrator() %}
+    <div class="view-content" id="preloadline-content" style="display:none;">
+      <h3>Журнал предобработки файла <span class="filename">{{ current_file[1] }}</span>:</h3>
+      <div class="view-container" id="preloadlog-container"></div>
+    </div>
+  {% endif %}
+  
+  </div>
+
+{% endblock %}
+
+{% block pagination %}
+
+  <div id="log-pagination">
+    <table border="0">
+    <form action="{{ pagination['link'] }}" id="pagination-form" method="GET" onSubmit="return $onPaginationFormSubmit(this);">
+    <input type="hidden" id="page" name="page" value="" />
+    <input type="hidden" id="preload_id" name="preload_id" value="{{ current_file[0] }}" />
+    <input type="hidden" id="searched" name="search" value="{{ search }}">
+
+    <tr>
+      <td><div class="caption total_rows">Всего (заказов / карт):<div class="total">{{ pagination['total'] }}</div></div></td>
+      <td>
+        <div id="log-page">
+          <dl>
+            <dd id="page:prev" class="pagination auto prev">
+              <a class="nav {% if pagination['has_prev'] %}enabled{% else %}disabled{% endif %}" href="{{ pagination['link'] }}&page={{ pagination['current_page'] }}&prev=1" title="Назад"> << </a>
+            </dd>
+            <dd id="page:next" class="pagination auto next">
+              <a class="nav {% if pagination['has_next'] %}enabled{% else %}disabled{% endif %}" href="{{ pagination['link'] }}&page={{ pagination['current_page'] }}&next=1" title="Вперед"> >> </a>
+            </dd>
+            {% for p in pagination['iter_pages'] %}
+              {%- if p == -1 -%}
+            <dd class="pagination spaced disabled">...</dd>
+              {%- else -%}
+            <dd id="page:{{ p }}" class="pagination valid enabled {% if p == pagination['current_page'] %}selected{% endif %}">
+              <a href="{{ pagination['link'] }}&page={{ p }}">{{ p }}</a>
+            </dd>
+              {%- endif -%}
+            {% endfor -%}
+          </dl>
+        </div>
+      </td>
+      <td>
+        <div id="log-per-page">
+          <div class="caption per_page">Записей на странице:</div>
+          <select class="popup" id="per-page" name="per_page" onchange="this.form.submit()">
+          {% for o in pagination['per_page_options'] -%}
+            <option value="{{ o }}" {% if pagination['per_page'] == o %}selected{% endif %}>{{ o }}</option>
+          {%- endfor %}
+          </select>
+        </div>
+      </td>
+      <td>
+        <div id="log-sortbox">
+          <div class="caption sortbox">Сортировка:</div>
+          <select class="popup" name="sort" onchange="this.form.submit()">
+          {% for value, name in pagination['sort']['modes'] -%}
+            <option value="{{ value }}" {% if pagination['sort']['current_sort'] == value %}selected{% endif %}>{{ name|safe }}</option>
+          {%- endfor -%}
+          </select>
+        </div>
+      </td>
+    </tr>
+    </form>
+    </table>
+  </div>
+
+{% endblock %}
+
+{% block filter %}
+
+  <div id="log-filter">
+    <table border="0">
+    <form action="{{ pagination['link'] }}" id="filter-form" method="POST">
+    <input type="hidden" name="page" value="{{ pagination['current_page'] }}">
+    <input type="hidden" name="per-page" value="{{ pagination['per_page'] }}">
+    <input type="hidden" id="preload_id" name="preload_id" value="{{ current_file[0] }}">
+    <input type="hidden" id="article" name="article" value="{{ current_file[2] }}">
+    <input type="hidden" id="searched" name="search" value="{{ search }}">
+    <input type="hidden" id="sort" name="sort" value="{{ pagination['sort']['current_sort'] }}">
+    <input type="hidden" id="command" name="command" value="">
+
+    <tr>
+      <td><div class="caption bank">Клиент:</div></td>
+      <td>
+        <select class="field popup" id="bank" name="bank" onchange="MakeFilterSubmit()">
+          {% for bank in banks -%}
+            <option value="{{ bank }}" {% if args['bank'][1] == bank %}selected{% endif %}>{{ bank }}</option>
+          {%- endfor %}
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td><div class="caption order-date">Дата предобработки c:</div></td>
+      <td>
+        <input class="field date" type="date" id="order-date-from" name="date_from" value="{{ args['date_from'][1] }}" onchange="MakeFilterSubmit()">
+        <span class="caption">по:</span>
+        <input class="field date" type="date" id="order-date-to" name="date_to" value="{{ args['date_to'][1] }}" onchange="MakeFilterSubmit()">
+      </td>
+    </tr>
+    <tr>
+      <td><div class="caption state">Условие отбора:</div></td>
+      <td>
+        <select class="field popup" id="state" name="state" onchange="MakeFilterSubmit()">
+          {% for state in states -%}
+            <option value="{{ state[0] }}" {% if args['state'][1] == state[0] %}selected{% endif %}>{{ state[1] }}</option>
+          {%- endfor %}
+        </select>
+      </td>
+    </tr>
+    </form>
+    </table>
+  </div>
+
+{% endblock %}
+
+{% block commands %}
+
+  <div id="menu">
+
+  <div id="menu-commands">
+    <form action="{{ base }}" id="init-form" method="get"></form>
+    <button class="btn btn-success" id="refresh">Обновить</button>
+    <button class="btn btn-warning" id="init-filter">Сбросить фильтр</button>
+    <button class="btn btn-primary" id="export">Экспортировать</button>
+  </div>
+
+  <div class="block" id="search-box">
+    <form action="{{ base }}" id="search-form" method="post">
+      <input class="string" id="search-context" name="search" type="text" value="{{ search }}">
+      <img id="search-icon" src="{{ root }}static/img/db-search.png" title="Найти" alt="">
+    </form>
+  </div>
+
+  </div>
+  
+{% endblock %}
+
+{% block footer %}{% include 'default-footer.html' %}{% endblock %}
+
+

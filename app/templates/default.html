@@ -1,0 +1,47 @@
+{% extends "simple.html" %}
+
+{% import 'forms.html' as Forms %}
+
+{% block title %}WebPerso Default menu{% endblock %}
+
+{% block starter %}
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+/*
+    var container = $("#menu");
+    var w = $_screen_center('max');
+
+    //alert(reprObject(w));
+
+    var mode = w['W'] > w['H'] ? { height:"80%", width:"80%" } : { width:"80%", height:"80%" };
+
+    mode['margin'] = "80px";
+
+    container
+        .animate(mode, 600, function() {}).promise().done(function() {});
+
+    //$(".navigation").each(function(x) { alert(this.attr('class')); }); this.animate(mode, 600, function() {});
+
+    $(".navigation").animate(mode, 600, function() {}).promise().done(function() {});
+*/
+});
+
+</script> 
+
+{% endblock %}
+
+{% block page_content %}
+
+<div class="page-header">
+  <div class="menu" id="menu">
+
+  <h2>{{ message }}</h2>
+
+  {{ Forms.form('default', 'home', navigation) }}
+
+  </div>
+</div>
+
+{% endblock %}

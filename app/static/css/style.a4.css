@@ -1,0 +1,112 @@
+
+/*
+@page {
+    size: 21cm 29.7cm;
+    margin: 30mm 45mm 30mm 45mm;
+}
+div.chapter, div.appendix {
+    page-break-after: always;
+}
+div.titlepage {
+    page: blank;
+}
+@media print {
+    body{
+        width: 21cm;
+        height: 29.7cm;
+        margin: 30mm 45mm 30mm 45mm; 
+   } 
+}
+*/
+
+@page { size: A4; }
+
+@media screen {
+    .html-container { border:1px solid #ccc; }
+}
+
+@media print {
+    html, body { width:200mm; height:260mm; max-height:260mm; }
+    body { counter-reset:section; counter-increment:section; }
+    div.content-block, div.items, p { page-break-inside:inherit; }
+    header { top:0; }
+    footer { bottom:0; padding-top:20px; border:0px solid black; }
+    .page-break { display:block; page-break-before:always; height:80px; margin-bottom:40px; border-bottom:1px solid #6da0b8; }
+    .break { text-align:center; border:0px solid black; width:660px; }
+    .break:after { text-align:center; width:660px; counter-increment:section; content: " - " counter(section) " - "; }
+    .sign { padding:0px; margin-top:20px; }
+    .with_signing {}
+    header, footer { position:fixed; width:660px; left:94px; }
+}
+
+body { padding:10px; }
+html { 
+    margin:0 auto;
+    font:12pt/1.26 "Times New Roman", "Gill Sans", sans-serif;
+    width:210mm;
+    height:260mm; /*297*/
+}
+.html-container { 
+    padding:20px 20px 20px 80px;
+}
+
+.border td, div.border { border:0px solid #000; }
+.top { text-align:left; vertical-align:top; }
+
+pre { margin:0; }
+h1, h2 { font-size:1em; }
+
+.header { padding-bottom:20px; border-bottom:1px solid #6da0b8; }
+.header div { display:inline-block; }
+.header img.rosan { width:152px; }
+.header div.rosan { margin-left:10px; font-size:8px; line-height:1.66; }
+
+.caption p, .content-block div.items p { text-align:left; } /* justify */
+.caption p, .caption div.signing, .content-block div.items p, .date { text-indent:2.1em; }
+.order { margin-bottom:40px; }
+
+.caption { margin-top:4.0em; margin-bottom:1.0em; }
+.caption h1 { text-align:center; font-size:1.4em; font-weight:bold; }
+.caption table { width:100%; }
+.caption td { width:33%; font-size:1.0em; }
+.caption div.signing { font-weight:bold; }
+.caption p {}
+
+.date { text-align:left; }
+.location { text-align:center; }
+.number { text-align:right; padding-right:1.5em; }
+
+.content-block div.items p {}
+.content-block div.other { margin-top:40px; }
+.content-block div.other pre { 
+    font:12pt/1.26 "Times New Roman", "Gill Sans", sans-serif; 
+    padding:10px 0 0 0;
+}
+
+.sign { padding:40px 0 40px 0; width:100%; }
+.sign table { width:100%; border-spacing:0; }
+.sign td { width:60%; text-align:left; }
+.sign td.post {}
+.sign td.facsimile img { width:200px; }
+.sign td.person { text-align:right; vertical-align:top; white-space:nowrap; padding:0 40px; }
+.sign div.other { 
+    margin-top:40px; 
+    font:10pt/1.26 "Times New Roman", "Gill Sans", sans-serif; 
+}
+
+.with_signing { vertical-align:middle !important; }
+
+.bottom { width:100%; text-align:center; margin-top:20px; }
+.bottom img.rosan { width:22px; }
+
+.footer { font-size:0.6em; border-top:1px solid #6da0b8; }
+.footer p { margin:0; padding:0; }
+.footer table { width:100%; }
+.footer td { vertical-align:top; padding-top:5px; }
+.footer td.p1 { width:50%; text-align:left; }
+.footer td.p2 { width:25%; text-align:right; }
+.footer td.p3 { width:25%; text-align:right; }
+
+.right { text-align:right; }
+
+.company { font-weight:bold; }

@@ -1,0 +1,102 @@
+{% extends "simple.html" %}
+
+{% from 'templates.html' import render_calculator_type %}
+{% from 'templates.html' import render_calculator_item %}
+
+{% block starter %}
+
+<script src="{{ url_for('static', filename='js/db.controller.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/calculator.default.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/show.js') }}{{ vsc }}"></script>
+
+{% endblock %}
+
+{% block page_content %}
+
+<div class="calculator">
+  <form action="{{ base }}" class="form" id="calculator" method="POST">
+    <input type="hidden" id="command" name="command" value="">
+
+    <div class="top">
+      <div class="bound">
+        <dt>Тираж:</dt>
+        <select id="bound" name="bound">
+          {%- for bound in bounds %}<option value="{{ bound[0] }}">{{ bound[1] }}</option>{% endfor -%}
+        </select>
+      </div>
+      <div class="panel">
+        <button class="btn btn-primary" id="loc_export">Экспортировать</button>
+        <button class="btn btn-primary" id="reload">Сбросить</button>
+        <button class="btn btn-danger" id="back">Выйти</button>
+        <div class="sign">
+          <img id="sign" src="{{ root }}static/img/sign-off.png" title="{{ _('Off') }}" alt="">
+        </div>
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="common-tab-head common-tab-head-top" id="calculator-tabs">
+      <ul>
+      {%- for tid in tabs['_'] -%}
+      {%- set tab = tabs[tid] -%}
+        <li class="{{ tab['selected'] }}"><a href="#" class="common-tab" id="tab:{{ tid }}">{{ tab['title'] }}</a></li>
+      {%- endfor -%}
+      </ul>
+    </div>
+
+    <div class="common-tab-data-top" id="calculator-data">
+      {%- for tid in tabs['_'] -%}
+      {%- set tab = tabs[tid] -%}
+      <div class="{% if not tab['selected'] %}hidden{% endif %}" id="box_{{ tid }}">
+        <h2>{% if comments[tid] %}{{ comments[tid][0] }}{% endif %}</h2>
+        <div class="tab">
+          <table class="data" border="0">
+          {%- for gid in groups['tabs'][tid] -%}
+          {%- set group = groups[gid] -%}
+          <tr>
+            <td class="group"><h3>{{ group['title'] }}</h3></td>
+            {% if group['ctype'] == '1' %}
+              {%- for side in group['options'] -%}
+            <td class="side">{{ side }}</td>
+              {%- endfor -%}
+            {% endif %}
+          </tr>
+            {%- for iid in items['groups'][gid] -%}
+            {%- set item = items[iid] -%}
+              {{ render_calculator_item(group['ctype'], iid, item, comments[iid]) }}
+            {%- endfor -%}
+          {%- endfor -%}
+          </table>
+        </div>
+      </div>
+      {%- endfor -%}
+    </div>
+  </form>
+
+  <hr>
+
+  <div class="results">
+    <table>
+    <tr>
+      <td><div class="title">Себестоимость:</div></td>
+      <td><div class="title">НДС [{{ measures['tax'] }}%]:</div></td>
+      <td><div class="title">Наценка [{{ measures['charge'] }}%]:</div></td>
+      <td><div class="title">ИТОГ [€, {{ measures['euro'] }}]:</div></td>
+      <td><div class="title">ИТОГ [$, {{ measures['cross'] }}]:</div></td>
+      <td><div class="title">ИТОГ в Рублях:</div></td>
+    </tr>
+    <tr>
+      <td><div class="sum" id="price">0.000</div></td>
+      <td><div class="sum" id="tax">0.000</div></td>
+      <td><div class="sum" id="charge">0.000</div></td>
+      <td><div class="sum" id="euro">0.000</div></td>
+      <td><div class="sum" id="usd">0.000</div></td>
+      <td><div class="sum" id="rub">0.000</div></td>
+    </tr>
+    </table>
+  </div>
+
+</div>
+
+{% endblock %}

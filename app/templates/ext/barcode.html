@@ -1,0 +1,92 @@
+{% extends "simple.html" %}
+
+{% import 'items.html' as Items %}
+
+{% block styles %}
+
+<style type="text/css">
+
+::-webkit-scrollbar {
+    width: 10px !important;
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(200, 200, 200, 0.5) !important;
+}
+
+</style>
+
+{% endblock %}
+
+{% block starter %}
+
+<script src="{{ url_for('static', filename='js/db.controller.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/barcode.dialogs.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/scroll.caption.min.js') }}{{ vsc }}"></script>
+
+<script src="{{ url_for('static', filename='js/barcode.default.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/barcode.min.js') }}{{ vsc }}"></script>
+
+<script type="text/javascript" src="{{ url_for('static', filename='js/jquery.scannerdetection.js') }}"></script>
+<script type="text/javascript">
+
+$(document).scannerDetection({
+    timeBeforeScanTest: 200, // wait for the next character for upto 200ms
+    startChar: [120], // Prefix character for the cabled scanner (OPL6845R)
+    endChar: [13], // be sure the scan is complete if key 13 (enter) is detected
+    avgTimeByChar: 40, // it's not a barcode if a character takes longer than 40ms
+    onComplete: function(barcode, qty) {} // main callback function 
+});
+
+</script>
+
+{% endblock %}
+
+{% block header %}
+
+{% include 'simple-header.html' %}
+
+{% endblock %}
+
+{% block page_content %}
+
+<div class="ext-page" id="page-container">
+  <div class="caption-container" id="caption">
+    <input type="hidden" id="OK" name="OK" value="{{ OK }}">
+
+    <div class="history">
+      <div class="back" id="history:back" title="{{ _('Go back') }}"><<</div>
+      <div class="forward" id="history:forward" title="{{ _('Go forward') }}">>></div>
+    </div>
+
+    <div class="caption">{{ _('PROVISION BARCODE READER') }}</div>
+    <div class="caption-name">
+      <table border="0">
+      <tr>
+      <td><h1>{{ rendered_title|safe }}</h1></td>
+      <td>
+    {%- if page_menu -%}
+      <div class="caption-buttons">
+      {% for item in page_menu %}
+        <button class="btn btn-{{ item[3] }}" href="{{ item[2] }}" id="barcode:{{ item[0] }}">{{ item[1] }}</button>
+      {% endfor %}
+        <button class="btn btn-primary" id="barcode:reset">Сбросить</button>
+      </div>
+    {%- endif -%}
+      </td></tr></table>
+    </div>
+  </div>
+
+  <div class="barcode_area" id="barcode_area">
+    <form action="" id="filter-form" method="POST" onsubmit="return false;">
+      <input class="string" type="text" id="barcode" name="barcode" value="" title="{{ _('Barcode Scan Value') }}">
+    </form>
+  </div>
+
+  <div class="view-container" id="line-content"></div>
+</div>
+
+{% endblock %}
+
+{% block dialogs_content %}
+
+{% endblock %}

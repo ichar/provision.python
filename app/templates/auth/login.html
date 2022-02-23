@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% from 'templates.html' import render_login, render_password, render_submit %}
+
+{% block header_styles %}
+
+<style type="text/css">
+
+section { float:none; }
+
+</style>
+
+{% endblock %}
+
+{% block styles %}
+
+  {%- if is_mobile -%}
+
+<link href="{{ url_for('static', filename='css/style') }}.login.mobile.css{{ vsc }}" rel="stylesheet" type="text/css">
+
+  {%- else -%}
+
+<link href="{{ url_for('static', filename='css/style') }}.login.css{{ vsc }}" rel="stylesheet" type="text/css">
+
+  {%- endif -%}
+
+  {%- if is_explorer -%}
+
+<link href="{{ url_for('static', filename='css/style') }}.login.ie.css{{ vsc }}" rel="stylesheet" type="text/css">
+
+  {%- endif -%}
+
+{% endblock %}
+
+{% block starter %}
+
+<script src="{{ url_for('static', filename='js/login.min.js') }}{{ vsc }}"></script>
+
+{% endblock %}
+
+{% block title %}WebBankPerso Login{% endblock %}
+
+{% block page_content %}
+
+<div class="login">
+  <form action="" method="post" class="form" role="form">
+    {{ form.hidden_tag() }}
+
+    {{ render_login(form.login) }}
+
+    {{ render_password(form.password, show_password) }}
+
+    <div class="checkbox">
+      <label><input checked="" id="remember_me" name="remember_me" type="checkbox" value="y">Сохранять подключение</label>
+    </div>
+
+    {{ render_submit(form.submit) }}
+
+  </form>
+
+  <br>
+  <p>{{ _('Do you wish to change password?') }} <a href="{{ url_for('auth.change_password') }}">{{ _('Click here') }}</a>.</p>
+  <p>{{ _('Forgot Your Password?') }} <a href="{{ url_for('auth.reset_password_request') }}">{{ _('Reset it') }}</a>.</p>
+</div>
+
+{% endblock %}

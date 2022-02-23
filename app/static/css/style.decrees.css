@@ -1,0 +1,189 @@
+body { background-color:#042e44; margin:20px auto; padding-left:20px; padding-right:20px; }
+
+section { display:block !important; width:100%; }
+
+.ui-dialog { z-index:1000; }
+
+div.flash {
+    background-color:#CC2E2C; 
+    border:2px solid #fff;
+    color:white;
+    font:normal 18px Arial;
+    text-align:center;
+}
+
+#page-section {
+    border-bottom:1px solid #eeeeee;
+    margin-bottom:40px;
+}
+
+#page-container {
+    margin-bottom:20px;
+}
+
+#page-header {
+    margin:20px 0 0 0;
+}
+
+.caption-container {
+    background-color:#042e44; /* #0c4868 042e44 154c68 143d52 */
+    display:block;
+    font:normal 32px "Helvetica Neue", "Lucida Grande", Arial;
+    color:yellow;
+
+    padding-bottom:0px;
+    border-bottom:5px solid #CECE6C;
+    padding-top:10px;
+    margin-bottom:10px;
+
+    transition:transform 600ms ease;
+    will-change:transform;
+    opacity:1.0;
+    z-index:500;
+}
+
+.fixed {
+    position:fixed;
+}
+
+.caption-container h1 {
+    background-color:#7474d8;
+    color:white;
+    padding:0 20px 0 20px;
+    width:fit-content;
+    font-size:20px;
+
+    width:-moz-fit-content;
+}
+
+.nodata {
+    background-color:#c22040; /* blueviolet  */
+    color:white;
+    width:200px;
+    text-align:center;
+    font-size:18px;
+    margin:20px auto;
+    padding:10px;
+}
+
+.caption-name { margin-top:25px; }
+.caption-name * { display:inline-block; }
+.caption-name table { width:fit-content; }
+.caption-buttons { padding:10px; }
+
+.header { margin-bottom:20px; margin-top:10px; }
+.header div { display:inline-block; }
+.header p { font-size:12px; color:#caa22c; margin:0; }
+
+div.header .address { max-width:800px; }
+
+div.header .sum_total {
+    color:#d2d260;
+    border:1px solid white;
+    padding:12px;
+    font-size:14px;
+    float:right;
+    text-align:center;
+    margin-bottom:20px;
+}
+
+#line-content { text-align:left; }
+
+table.lines, tr.line { width:100%; }
+
+.line { 
+    display:inline-flex;
+    margin-bottom:10px;
+}
+
+.ext-page .line .review_id { background-color:#DEA248; color:white; text-align:center; }
+.ext-page .line .AuthorName { background-color:#482; color:white; } /* 862 848 */
+.ext-page .line .ExecutorName { background-color:#848; color:white; }
+.ext-page .line .Page { background-color:#888; color:white; }
+
+.np           { min-width:30px; width:20px; }
+.review_id    { min-width:40px; width:40px; }
+.AuthorName   { min-width:120px; width:20%; }
+.Article      { min-width:100px; width:60%; }
+.ExecutorName { min-width:70px; width:25%; }
+.Status       { min-width:124px; width:10%; }
+.Page         { min-width:85px; }
+.DueDate      { min-width:72px; width:6%; white-space:nowrap; }
+
+#line-content .decree_note, #line-content .decree_report {
+    padding:10px;
+}
+
+.num { 
+    font-size:14px; 
+}
+.purpose dd, .note dd, .report dd { 
+    border:1px solid #aaa;
+    padding:10px;
+    margin-bottom:10px;
+}
+.note textarea, .report textarea { 
+    min-width:340px;
+    width:80%;
+    height:94px;
+    padding:10px;
+    color:#333;
+}
+
+.info { 
+    font-size:12px;
+    color:#c1dacd;
+}
+
+.info dt { 
+    font-weight:bold;
+    color:#a59a7c;
+    width:150px; 
+}
+
+.done { background-color:#080 !important; color:white !important; }
+.overdue { background-color:#c00 !important; color:white !important; }
+.rejected { background-color:#777 !important; color:white !important; }
+
+.info dd { max-width:1000px; margin-right:10px; }
+
+div.info-container { padding-right:20px; }
+div.info-container .equipment_title { color:#ffffff; }
+div.info-container .stocklist { font-weight:bold; cursor:pointer; color:#b248c6; }
+div.info-container .article { color:#deda64; font-size:14px; }
+
+div.common-item dt.common-title { margin-top:5px;}
+div.common-next { 
+    margin:0 !important;
+}
+div.common-combo select { font:12px Helvetica,Arial;}
+
+div.decrees-box { 
+    font-size:12px; 
+    vertical-align:middle; 
+    margin:0;
+    padding:0;
+}
+
+div.decrees-box * { display:inline-block; }
+div.decrees-box div.common-combo #statuses { width:160px; min-width:120px; }
+div.decrees-box div.common-combo #executors { width:180px; min-width:140px; }
+
+/*** Select Date Area ***/
+
+#calendar { font-size:14px; }
+
+.selectdate-context { height:250px; }
+
+#selectdate_box { 
+    display:block; 
+    border:1px solid black; 
+    margin:10px auto;
+    width:260px;
+}
+
+@media (max-width: 1280px) {
+
+.info dd { max-width:800px; }
+
+}

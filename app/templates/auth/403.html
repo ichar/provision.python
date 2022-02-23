@@ -1,0 +1,37 @@
+{% extends "simple.html" %}
+
+{% block title %}WebPerso Forbidden{% endblock %}
+
+{% block starter %}
+
+<script type="text/javascript">
+$(function() 
+{
+    if ($IS_FRAME)
+        return;
+
+    var control = $("#error");
+    var left = int(($_width('max') - control.width()) / 2);
+    
+    //alert('W:'+$_width('screen-max')+':'+$_width('screen-min')+':'+$_width('max')+':'+$_width('min')+'='+left);
+    //alert('H:'+$_height('screen-max')+':'+$_height('screen-min')+':'+$_height('max')+':'+$_height('min')+':'+$_height('available'));
+
+    //control.css("margin-left", left.toString()+"px");
+    //control.position().left = left;
+});
+</script> 
+
+{% endblock %}
+
+{% block page_content %}
+
+<div class="page-header">
+    <div class="error" id="error">
+    
+      {#<h1>{{ message }}</h1>#}
+      <img src="{{ root }}static/img/403-error.png">
+
+    </div>
+</div>
+
+{% endblock %}

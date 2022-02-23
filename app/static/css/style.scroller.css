@@ -1,0 +1,23 @@
+/*** Window Scrollbar ***/
+
+body { overflow-y:inherit; }
+
+::-webkit-scrollbar {
+    width:0px;
+    height:10px;
+}
+::-webkit-scrollbar-track { background:rgba(0, 0, 0, 0.1); }
+::-webkit-scrollbar-thumb { background:rgba(0, 0, 0, 0.5); }
+
+::-webkit-scrollbar-thumb {
+    border-radius:9px;
+}
+::-webkit-scrollbar-thumb:hover {
+
+}
+
+.common-box::-webkit-scrollbar-track, .common-box div::-webkit-scrollbar-track { background:rgba(150, 150, 150, 0.2); }
+.common-box::-webkit-scrollbar-thumb, .common-box div::-webkit-scrollbar-thumb { background:rgba(150, 150, 150, 0.6); }
+
+#sidebar-filter-scroller::-webkit-scrollbar-track { background:rgba(255, 255, 255, 0.1); }
+#sidebar-filter-scroller::-webkit-scrollbar-thumb { background:rgba(255, 255, 255, 0.8); }

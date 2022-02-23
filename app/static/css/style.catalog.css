@@ -1,0 +1,215 @@
+body { background-color:#777; }
+
+section { display:block !important; width:100%; }
+
+#html-container { 
+    display:block;    
+    margin-right:20px;
+    font:normal 12px Arial;
+    width:100%;
+}
+
+/*** Header&Footer ***/
+
+#header-content { width:100%; border-bottom:1px solid #ccc; }
+#header-content div { display:inline-block; }
+
+#header-content, div.frame { min-width:1220px; }
+
+div.page-header {
+    border:none;
+    text-align:left;
+    font:normal 28px 'Roboto',Tahoma,"Lucida Grande",Arial;
+    margin:0;
+    /*
+    margin-bottom:15px;
+    width:100%;
+    */
+    padding:15px 10px 15px 10px;
+    color:#fff;
+}
+
+#page-footer    { margin:10px 0 0 0; padding-top:10px; border-top:1px dotted #888; }
+
+div.page-footer  { 
+    background:#C7C4F0; /* #882F28 #FCFCDA */
+    border:1px solid #ccc; 
+    font:normal 12px Tahoma,"Lucida Grande",Helvetica;
+    text-align:right;
+    padding:8px 10px 8px 10px;
+    color:#2F4166; /* #3F1512 */
+}
+
+div.page-footer .footer-command { float:left; margin-top:5px; }
+
+div.footer-info  { padding:0; } 
+div.footer-info * { display:inline-block; }
+
+.product-title   { font:normal 14px "Calibri", Helvetica, "Lucida Grande", "Arial"; font-style:normal; }
+.product-version { 
+    font-size:16px; 
+    color:##b428c4; 
+    font-style:normal; 
+    padding:0; 
+    margin:0 5px 0 5px; 
+}
+.product-name    { 
+    font:bold 12px Tahoma, Arial; 
+    font-style:normal; 
+    color: rgba(140, 20, 80, 0.85);
+    border:1px solid #777; 
+    padding:4px 12px 5px 12px; 
+    border-radius:12px; 
+    background-color:aliceblue; /*#effada; #e4e2b8*/
+}
+.f-indent        { margin:0; padding:0; color:#6B6A6B; }
+.product-release { font-size:12px; display:inline-block; padding-left:10px; margin-left:10px; border-left:1px dotted #333; }
+
+#menu { 
+    text-align:right;
+    margin:20px 20px 0 0;
+    float:right; 
+}
+
+::-webkit-scrollbar-thumb {
+    background: #e7e7e7 !important;
+}
+
+/*** Catalog Page ***/
+
+div.odd { background-color:#ffffff; }
+div.even { background-color:#e7e7e7; }
+
+div.group h3 { 
+    font:normal 24px Arial; 
+    padding:0 11px 5px 11px;
+    white-space:nowrap;
+    color:gold; 
+    /* text-align:-webkit-center; */
+}
+
+div.frame {
+    display:flex;
+    border:1px solid #ccc;
+    margin-bottom:10px;
+    padding:10px;
+    width:98%;
+}
+
+div.frame > div { 
+    vertical-align:top;
+}
+
+div.left_pane { 
+    border:0px solid #000;
+    text-align:-webkit-center; 
+}
+
+div.right_pane { 
+    border:0px solid #000;
+    text-align:-webkit-center;
+    height:100%;
+    float:right;
+}
+
+div.content { 
+    border:0px solid #000;
+    width:100%;
+}
+
+div.info {
+    display:flex; 
+}
+
+div.content > div { 
+    margin-left:10px;
+    padding:10px;
+}
+
+div.header { 
+    font-family:"Candara",Arial,sans-serif;
+    margin-left:10px;
+    color:#6080D0;
+    width:100%;
+}
+
+div.header h2 { margin-left:-3px; }
+
+div.header p { max-width:800px; font:normal 12px Arial; line-height:18px; }
+
+div.image { 
+    width:250px; 
+    -webkit-box-shadow: 0px 3px 20px #14314F;
+    box-shadow: 0px 3px 20px #14314F;
+    border-radius:8px;
+    padding:10px;
+    margin:10px;
+}
+div.image img {
+    max-width:250px;
+}
+
+div.frame .price { width:180px; } /* float:right; position:relative; */
+div.price { 
+    background-color:rgba(230, 230, 20, 0.25);
+    border:2px solid #888;
+    border-radius:16px; 
+    font-family:Times;
+    font-size:24px;
+    font-weight:normal; 
+    width:180px;
+    margin:10px;
+    text-align:center;
+    vertical-align:middle;
+    line-height:60px;
+}
+
+.device_title { 
+    font-size:3em; 
+    font-weight:bold; 
+    color:rgba(180, 60, 100, 0.8);
+    margin:0;
+    padding-top:10px;
+}
+
+h3.device_info { 
+    font-size:18px;
+    font-weight:normal; 
+    text-align:left;
+    color:#808080;
+}
+
+.values input { display:block; }
+
+.options { 
+    width:fit-content; 
+    margin-left:30px !important;
+    margin-bottom:10px;
+}
+
+div.even .options { 
+    background-color:rgba(60, 40, 110, 0.1);
+    border:1px solid #fff; 
+}
+div.odd .options { 
+    background-color:rgba(150, 140, 240, 0.1);
+    border:1px solid #ccc; 
+}
+
+.options .option { padding:10px; vertical-align:top; }
+.options .option:not(:last-child) { border-right:2px dotted gray; }
+.options * { display:table-cell; } /* inline-block */
+
+.options dt { 
+    font:normal 16px Tahoma; 
+    vertical-align:top; 
+    width:fit-content; 
+    display:inline; 
+    white-space:nowrap; 
+    color:rgba(160, 40, 80, 1.0); 
+}
+.options dd { padding-left:0px; padding-top:10px; color:#777; }
+
+.choice { line-height:20px; display:flex; padding-bottom:5px; }
+.choice * { display:inline-block; }
+.choice label { padding-left:10px; }

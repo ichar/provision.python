@@ -1,0 +1,215 @@
+{% extends "simple.html" %}
+
+{% import 'items.html' as Items %}
+
+{% block styles %}
+
+<link href="{{ url_for('static', filename='css/pikaday/pikaday.css') }}" rel="stylesheet" type="text/css">
+
+<style type="text/css">
+
+::-webkit-scrollbar {
+    width: 10px !important;
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(200, 200, 200, 0.5) !important;
+}
+
+</style>
+
+{% endblock %}
+
+{% block starter %}
+
+<script type="text/javascript">
+
+var selected_date = '{{ date }}';
+var selected_columns = '{{ registry["selected_columns"] }}';
+var forward = '{{ forward }}';
+var back = '{{ back }}';
+
+</script> 
+
+<script src="{{ url_for('static', filename='js/db.controller.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/payments-review.dialogs.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/scroll.caption.min.js') }}{{ vsc }}"></script>
+
+<script src="{{ url_for('static', filename='js/payments-review.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/reports.min.js') }}{{ vsc }}"></script>
+
+<script src="{{ url_for('static', filename='js/pikaday.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/pikaday.jquery.min.js') }}"></script>
+
+{%- set selected_columns = registry['selected_columns'] -%}
+
+{% endblock %}
+
+{% block header %}
+
+{% include 'simple-header.html' %}
+
+{% endblock %}
+
+{% block page_content %}
+
+<div class="ext-page" id="page-container">
+  <div class="caption-container" id="caption">
+    <input type="hidden" id="OK" name="OK" value="{{ OK }}">
+
+    <div class="history">
+      <div class="back" id="go:back" title="{{ _('Go back') }} {{ back }}"><<</div>
+      <div class="forward" id="go:forward" title="{{ _('Go forward') }} {{ forward }}">>></div>
+    </div>
+
+    <div class="caption">{{ _('Payments Review List') }}</div>
+    <div class="caption-name">
+      <table border="0">
+      <tr>
+      <td><h1>{{ attrs['date']|safe }}</h1></td>
+      <td>
+      <div class="caption-buttons">
+    {% if current_user.app_role_ceo %}
+        <button class="btn btn-success fix" id="payments:accept">Согласовать</button>
+        <button class="btn btn-danger fix" id="payments:reject">Отказать</button>
+    {% elif current_user.app_role_cao %}
+    {% elif current_user.app_is_provision_manager %}
+    {% else %}
+    {% endif %}
+    {% if not is_mobile %}
+        <button class="btn btn-primary" id="payments:print">Печать</button>
+    {% endif %}
+        <button class="btn btn-primary" id="payments:sort" title="Рублевый эквивалент на дату платежа">Сортировка</button>
+        <button class="btn btn-warning" id="selector" value="0">Сбросить все</button>
+    {%- if page_menu -%}
+      {% for item in page_menu %}
+        <button class="btn btn-{{ item[3] }}" href="{{ item[2] }}" id="payments:{{ item[0] }}">{{ item[1] }}</button>
+      {% endfor %}
+    {%- endif -%}
+      </div>
+      </td></tr></table>
+    </div>
+
+    <div class="header">
+      <div class="address">
+        <p>{{ _('Review Details') }}: {{ attrs['details'] }}</p>
+        <p>{{ _('Company') }}: {{ attrs['company'] }}</p>
+        <a href="" id="calendar">{{ _('Payments Review Calendar') }}</a>
+      </div>
+
+      <div class="sum_price">{{ sum_price|safe }}</div>
+    </div>
+  </div>
+
+  <div class="view-container" id="line-content">
+    <form action="{{ action }}" class="common-form" id="payments-form" method="POST" enctype="multipart/form-data">
+      <input type="hidden" name="date" value="{{ date }}">
+      <input type="hidden" id="command" name="command" value="">
+
+    <table class="lines" border="0">
+  {% for payment in payments -%}
+    {% set id = payment['id'] -%}
+
+    <tr class="line" id="row-line:{{ id }}:{{ loop.index }}">
+    {% for column in columns -%}
+      <td class="column {{ column }} {{ payment['classes'].get(column, '') }} {% if column in registry['selected_columns'] %}{{ statuses[id] }}{% endif %}" title="{{ titles[id][column] }}">{{ payment[column]|safe }}</td>
+    {%- endfor -%}
+    </tr>
+
+    <tr>
+      <td colspan="{{ columns|length }}">
+      <div class="info-container {{ states[0] }}" id="info:{{ id }}:{{ loop.index }}">
+        <table class="info" border="0">
+      {% for key in keys -%}
+          <tr><td><dt>{{ headers[key]['title'] }}:</dt></td><td class="{{ headers[key]['class'] }}"><dd>{{ items[id][key]|safe }}</dd></td></tr>
+      {%- endfor -%}
+        </table>
+      </div>
+      </td>
+    </tr>
+
+  {%- endfor -%}
+    </table>
+
+  {%- if not payments -%}
+    <div class="nodata">{{ _('No data') }}</div>
+  {%- endif -%}
+
+    </form>
+  </div>
+</div>
+
+<form action="" id="filter-form" method="POST"></form>
+
+{% endblock %}
+
+{% block dialogs_content %}
+
+<div class="common-dialog" id="payments-changes-container"></div>
+
+<div class="common-dialog" id="payments-confirm-container" title="{{ _('Stock edit form') }}" style="display:none;">
+  <h3 id="payments-header">{{ _('Input form items to edit Stock attributes.') }}</h3>
+  <div class="common-confirmation">
+    <h4 id="payments-caption">{{ _('Stock rules see in the application documentation.') }}</h4>
+    <div class="common-box common-panel">
+      <div id="payments-box">
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="common-dialog" id="selectdate-confirm-container" title="{{ _('Select Payments Review Date form') }}" style="display:none;">
+  <h3>{{ _('You can select the payments review date.') }}</h3>
+  <div class="common-confirmation">
+    <h4>{{ _('Select payments review date format see in the application documentation.') }}</h4>
+    <div class="common-box common-panel selectdate-context">
+      <input class="string" id="selectdate" name="selectdate" type="hidden">
+      <div id="selectdate_box"></div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block final_scripts %}
+
+<script type="text/javascript">
+/*
+var date = new Date();
+var now = date.getToday().split('-');
+
+alert(now);
+*/
+var $datepicker = $('#selectdate').pikaday({
+  firstDay: 1,
+  bound: false,
+  //minDate: new Date(int(now[0]), int(now[1]), int(now[2])),
+  minDate: new Date(2020, 01, 01),
+  maxDate: new Date(2030, 12, 31),
+  yearRange: [2020,2030],
+  disableWeekends:false,
+  format: 'YYYY/M/D',
+  toString(date, format) {
+      // you should do formatting based on the passed format,
+      // but we will just return 'D/M/YYYY' for simplicity
+      const day = date.getDate();
+      const month = date.getMonth() + 1;
+      const year = date.getFullYear();
+      return `${day}.${month}.${year}`;
+  },
+  parse(dateString, format) {
+      // dateString is the result of `toString` method
+      const parts = dateString.split('.');
+      const day = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10) - 1;
+      const year = parseInt(parts[2], 10);
+      return new Date(year, month, day);
+  },
+  onSelect: function (date) {},
+  container: document.getElementById('selectdate_box')
+});
+
+</script>
+
+{% endblock %}
+

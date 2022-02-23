@@ -1,0 +1,88 @@
+
+/*** CONFIGURATOR ***/
+
+body { overflow-y:inherit; }
+
+#page-container > .configurator { display:flex; margin-right:12px; }
+
+div.configurator .view-container { width:auto; }
+
+.column { line-height:16px; }
+
+/*** Configurator Filter Items  ***/
+
+div.configurator-filter #client       { min-width:190px; }
+div.configurator-filter #filetype     { width:398px; }
+div.configurator-filter #batchtype    { width:398px; }
+div.configurator-filter #tag          { min-width:190px; }
+div.configurator-filter #tagvalue     { min-width:190px; }
+
+/*** Config ***/
+
+#reference-box { background-color:#F8FCFF; overflow-x:auto; overflow-y:auto; }
+
+#reference-box dd, #reference-box dt { display:inline-block; }
+#reference-box dt { font-weight:normal; }
+
+#reference-box table { border-collapse:separate; border-spacing:2px; background-color:#ccc; width:100%; }
+#reference-box td { height:21px; min-width:20px; padding:3px 10px 3px 10px; }
+
+#tree-view-icon { cursor:pointer; }
+
+#config-container { padding:10px; box-shadow: 0 0 20px rgba(0, 0, 0, .1) inset; }
+#config-container, .config-changeform, .config-button { font-size:12px; }
+
+.config-default { border:1px solid #ccc; background-color:#F8F4C8; }
+.config-blank { border:1px solid rgba(70, 140, 170, 0.6); background-color:rgba(180, 200, 210, 0.5); }
+
+#config-container td.icon { border:0px solid #ccc; }
+#config-container img { cursor:pointer; }
+
+#config-container input, #config-container textarea { font:normal 13px Arial; line-height:20px; } 
+
+.config-title { vertical-align:middle; font-weight:bold; padding-right:10px; padding-bottom:0px; width:180px; }
+.config-value { padding:5px; vertical-align:middle; }
+
+.config-value input:disabled { border:1px solid #ccc; padding:3px 5px; }
+
+.config-changeform td { padding-top:3px; padding-bottom:0; }
+.config-changeform input { margin-bottom:0px; }
+.config-int { width:63px; text-align:center; }
+.config-varchar { min-width:260px; }
+.config-pk { background-color:#7F95B7 !important; color:white !important; }
+
+.config-hightext { min-width:460px; height:120px; }
+
+.config-panel { margin:10px 0 0 5px; }
+.config-button { margin-right:3px; }
+
+.tab-view-content .config-value, .tab-view-content .config-varchar, .tab-view-content .config-text { width:460px; }
+.tab-view-content .config-longvarchar { width:720px; }
+
+.tab-view-content td.log-tid        { width:80px; }
+.tab-view-content td.log-filetype   { width:120px; }
+.tab-view-content td.log-batchtype  { width:180px; }
+.tab-view-content td.log-tname      { width:120px; }
+.tab-view-content td.log-tvalue     { width:120px; }
+
+#processes-container td.log-currfilestatus, 
+#processes-container td.log-nextfilestatus,
+#processes-container td.log-closefilestatus { width:210px; }
+/*
+#opers-container td.log-opertypename
+*/
+#opers-container td.log-batchtype   { width:210px; }
+#opers-container td.log-opertype    { width:320px; }
+
+#filters-container td.log-batchtype { width:280px; }
+#filters-container td.log-tname     { width:140px; }
+
+#tzs-container td.log-pname         { width:120px; }
+/*
+#tzs-container td.log-pvalue        { width:300px; }
+*/
+#tags-container td.log-tid          { width:100px; }
+
+#tagvalues-container td.log-tid     { width:100px; }
+
+#tagoperparams-container td.log-tid { width:100px; }

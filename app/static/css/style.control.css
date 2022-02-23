@@ -1,0 +1,90 @@
+/*** COMMON CONTROLS DESIGN ***/
+
+div.common-dialog { margin-top:2px; }
+
+div.common-dialog h3 { margin-left:13px; }
+
+div.common-filter { margin:0px; display:block; }
+div.common-filter select.popup { height:28px; margin-top:1px; margin-bottom:1px; }
+
+div.common-confirmation h4 { font-size:11px; padding-left:30px; padding-right:30px; line-height:16px; }
+div.common-confirmation ul { margin:0px; }
+div.common-confirmation li { 
+    background-color:#EFE4D4; /* #C86F6D #EFD4D4 */
+    border:1px solid #ccc; 
+    list-style-type:none; 
+    font-size:12px; 
+    padding: 0 10px 0 10px; 
+}
+/*div.common-confirmation li.selected { background-color:#c00; color:white; }*/
+div.common-confirmation td.selected { background-color:#A52A2A; color:white !important; } /* brown */
+div.common-confirmation dd { margin-right:5px; }
+
+div.common-box { margin:10px; padding:10px; border:1px solid #e7e7e7; overflow-x:hidden; overflow-y:hidden; }
+div.common-box h4 { font-size:11px; padding-left:10px; line-height:16px; }
+
+div.common-panel label > span { font-size:11px; display:inline-block; }
+div.common-panel label > input[type="checkbox"] { margin:0 6px 0 12px; }
+
+div.common-next { margin-top:5px !important; }
+
+.common-mark { padding-left:5px; color:#aaa; display:inline-block; vertical-align:sub; }
+
+form.common-form { margin:0; padding:0; }
+
+div.common-tab-head {
+    border:0px solid #000;
+    position:relative;
+}
+
+div.common-tab-head ul { padding:0; margin:0; }
+div.common-tab-head li { 
+    display:inline-block;
+    list-style-type:none;
+    font-size:12px;
+    border:1px solid #aaa;
+    text-align:center;
+    padding:2px;
+}
+
+div.common-tab-head a { 
+    white-space:nowrap;
+    cursor:pointer;
+    line-height:24px;
+    padding:10px;
+    color:#402000;
+    font-weight:normal;
+    font-size:11px;
+}
+
+div.common-tab-head li.selected { 
+    background-color:#e7e7e7;
+    border-bottom:1px solid #e7e7e7;
+    position:relative;
+    z-index:11;
+}
+
+div.common-tab-head-top li.selected { border-bottom:0 none; }
+div.common-tab-head-bottom li.selected { border-top:0 none; }
+div.common-tab-data-top, div.common-tab-data-bottom {
+    background-color:#e7e7e7;
+    position:relative;
+    z-index:10;
+    border:1px solid #aaa;
+    padding:5px 5px 10px 5px;
+}
+
+div.common-tab-data-top { margin-top:-2px; }
+div.common-tab-data-bottom { margin-bottom:-2px; }
+div.common-box dd.selected { border:1px solid #441010; background-color:#C82000; color:#ffffff; }
+div.common-box hr { color:#777; margin:10px 0; }
+
+div.common-input .string {}
+div.common-input .date { font-family:Helvetica, Arial; font-size:14px; width:130px; }
+
+div.common-new-item { margin-top:5px; }
+
+dt.common-title { vertical-align:top; margin-top:6px; }
+
+div.common-combo select { min-width:300px; }
+div.common-combo input  { width:286px; padding:4px 6px; }

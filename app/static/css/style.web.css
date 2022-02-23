@@ -1,0 +1,91 @@
+@font-face {
+    font-family:'ProximaNova';
+    src: url('../fonts/proxima_nova_semibold.woff') format('woff');
+    font-weight:normal;
+    font-style:normal;
+}
+/*
+@font-face {
+    font-family:'Roboto';
+    src: url('../fonts/Roboto-Regular-webfont.woff') format('woff');
+    font-weight:normal;
+    font-style:normal;
+}
+@font-face {
+    font-family: 'robotoblack';
+    src: url('../fonts/Roboto-Black-webfont.woff') format('woff');
+    font-weight:normal;
+    font-style:normal;
+}
+@font-face {
+    font-family: 'robotolight';
+    src: url('../fonts/Roboto-Light-webfont.woff') format('woff');
+    font-weight:normal;
+    font-style:normal;
+}
+*/
+@-webkit-keyframes fade-in {   0% { opacity: 0.1; }   100% { opacity: 1; }   }
+@-moz-keyframes    fade-in {   0% { opacity: 0.1; }   100% { opacity: 1; }   }
+@-o-keyframes      fade-in {   0% { opacity: 0.1; }   100% { opacity: 1; }   }
+@keyframes         fade-in {   0% { opacity: 0.1; }   100% { opacity: 1; }   }
+
+.ground {
+    -webkit-animation: fade-in 1s linear;
+    -moz-animation: fade-in 1s linear;
+    -o-animation: fade-in 1s linear;
+    animation: fade-in 1s linear;
+}
+#sidebarFrame {
+    transition: .1s ease-in-out;
+}
+
+div.flash { 
+    margin:20px auto;
+    width:50%;
+    padding:20px 40px 20px 40px;
+}
+
+#line-table { border-spacing:5px; }
+
+.middle-header { width:350px !important; margin:0px auto; margin-top:80px; } /* text-align:center !important; */
+
+#inner-sidebar {
+    padding-right:0;
+}
+
+#inner-sidebar::-webkit-scrollbar { display:none; }
+
+.breakable {} /* width:100%; white-space:nowrap;  */
+
+.BQty { min-width:40px; }
+.PQty { min-width:50px; }
+
+#CARDS_ACTIVATION { margin:0px 0 0px 0; }
+
+/*** Window Scrollbar ***/
+
+body { overflow-y:inherit; }
+
+::-webkit-scrollbar {
+    width:10px;
+    height:10px;
+}
+::-webkit-scrollbar-track { background:rgba(0, 0, 0, 0.1); }
+::-webkit-scrollbar-thumb { background:rgba(0, 0, 0, 0.5); }
+
+::-webkit-scrollbar-thumb {
+    border-radius:9px;
+}
+::-webkit-scrollbar-thumb:hover {
+
+}
+
+.common-box::-webkit-scrollbar-track, .common-box div::-webkit-scrollbar-track { background:rgba(150, 150, 150, 0.2); }
+.common-box::-webkit-scrollbar-thumb, .common-box div::-webkit-scrollbar-thumb { background:rgba(150, 150, 150, 0.6); }
+
+#sidebar-filter-scroller::-webkit-scrollbar-track { background:rgba(255, 255, 255, 0.1); }
+#sidebar-filter-scroller::-webkit-scrollbar-thumb { background:rgba(255, 255, 255, 0.8); }
+
+div.provision-container .tab .column { line-height:16px; }
+
+textarea { overflow:hidden; }

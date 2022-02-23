@@ -1,0 +1,78 @@
+﻿<html>
+  <head>
+    {% if title %}
+    <title>{{ title }} of BankPerso!</title>
+    {% else %}
+    <title>Welcome to BankPerso connector!</title>
+    {% endif %}
+    <style type="text/css">
+
+    .mainmenu {
+        background:rgba(40, 20, 220, 1.0);
+        padding:10px;
+        margin:20px;
+        color:white;
+        float:right;
+    }
+
+    </style>
+  </head>
+  <body>
+    <section id="header-section">
+
+      <a class="mainmenu" href="/auth/logout">Выход</a>
+
+    </section>
+
+    {#
+    <h2>Connection:</h2>
+    {% if connection %}
+    Server: {{ connection['server'] }}
+    User: {{ connection['user'] }}
+    Password: {{ connection['password'] }}
+    Database: {{ connection['database'] }}
+    {% endif %}
+    #}
+    <h2>Total orders:</h2>
+    {{ total }}
+
+    <h1>Banks rows:</h1>
+    {% for row in banks %}
+    <div><b>{{ row }}</b></div>
+    {% endfor %}
+
+    <h1>Types rows:</h1>
+    {% for row in types %}
+    <div><b>{{ row }}</b></div>
+    {% endfor %}
+
+    <h1>Types statuses:</h1>
+    {% for row in statuses %}
+    <div><b>{{ row }}</b></div>
+    {% endfor %}
+
+    <h1>Batch params:</h1>
+    {% for row in params %}
+    <div><b>{{ row['PName'] }}</b>:{{ row['PValue'] }} ({{ row['TValue'] }})</div>
+    {% endfor %}
+
+    <h1>TZ:</h1>
+    <table class="view-data orders" border="1">
+    <thead>
+    <tr>
+    {%- for column in config['TZ']['columns'] -%}
+      <td class="column header"><b>{{ config['TZ']['headers'][column] }}</b></td>
+    {%- endfor -%}
+    </tr>
+    </thead>
+    {% for row in TZ %}
+    <tr>
+      {%- for column in config['TZ']['columns'] -%}
+        <td>{{ row[column]|safe }}</td>
+      {%- endfor -%}
+    </tr>
+    {% endfor %}
+    </table>
+
+  </body>
+</html>

@@ -1,0 +1,186 @@
+body { background-color:#333; margin:20px auto; padding-left:20px; padding-right:20px; }
+
+section { display:block !important; width:100%; }
+
+.ui-dialog { z-index:1000; }
+
+div.flash {
+    background-color:#CC2E2C; 
+    border:2px solid #fff;
+    color:white;
+    font:normal 18px Arial;
+    text-align:center;
+}
+
+#page-section {
+    border-bottom:1px solid #eeeeee;
+    margin-bottom:40px;
+}
+
+#page-container {
+    margin-bottom:20px;
+}
+
+#page-header {
+    margin:20px 0 0 0;
+}
+
+.caption-container {
+    background-color:#333;
+    display:block;
+    font:normal 32px "Helvetica Neue", "Lucida Grande", Arial;
+    color:yellow;
+
+    padding-bottom:0px;
+    border-bottom:5px solid #CECE6C;
+    padding-top:10px;
+    margin-bottom:10px;
+
+    transition:transform 600ms ease;
+    will-change:transform;
+    opacity:1.0;
+    z-index:500;
+}
+
+.fixed {
+    position:fixed;
+}
+
+.caption-container h1 {
+    background-color:#7474d8;
+    color:white;
+    padding:0 20px 0 20px;
+    width:fit-content;
+    font-size:20px;
+
+    width:-moz-fit-content;
+}
+
+.nodata {
+    background-color:#c22040; /* blueviolet  */
+    color:white;
+    width:200px;
+    text-align:center;
+    font-size:18px;
+    margin:20px auto;
+    padding:10px;
+}
+
+.caption-name { margin-top:25px; }
+.caption-name * { display:inline-block; }
+.caption-buttons { padding:10px; }
+
+.header { margin-bottom:20px; margin-top:10px; }
+.header div { display:inline-block; }
+.header p { font-size:12px; color:#caa22c; margin:0; }
+
+div.header .address { max-width:800px; }
+
+div.header .sum_price {
+    color:#d2d260;
+    border:1px solid white;
+    padding:12px;
+    font-size:14px;
+    float:right;
+    text-align:center;
+    margin-bottom:20px;
+}
+
+#line-content { text-align:left; }
+
+table.lines, tr.line { width:100%; }
+
+.line { 
+    display:inline-flex;
+    margin-bottom:10px;
+}
+
+.np          { min-width:30px; width:20px; }
+.Seller      { min-width:120px; width:60%; }
+.Article     { width:250px; }
+.Qty         { width:50px; }
+.Subdivision { min-width:100px; width:40%; }
+.Comment     { min-width:60px; width:50%; font-size:12px; }
+.Currency    { width:30px; }
+.Total       { min-width:100px; width:12%; font-size:16px; white-space:nowrap; }
+
+.num { 
+    font-size:14px; 
+}
+.Price, .Total { 
+    text-align:right; 
+}
+.Qty {
+    text-align:center;
+}
+
+.info { 
+    font-size:12px;
+    color:#c1dacd;
+}
+
+.info dt { 
+    font-weight:bold;
+    color:#a59a7c;
+    width:150px; 
+}
+
+.info dd { padding-right:40px; }
+
+div.info-container .payment_type { color:#de9764; font-size:12px; }
+div.info-container .equipment_title { color:#ffffff; }
+div.info-container .stocklist { font-weight:bold; cursor:pointer; color:#b248c6; }
+div.info-container .article { color:#deda64; font-size:14px; }
+div.info-container .price { color:#deda64; font-size:14px; }
+div.info-container .sector { color:#8c81df; }
+
+#payments-changes-container {
+    background-color:#7fccd0;
+    color:white;
+    position:absolute;
+    display:none;
+    min-width:400px;
+    padding:10px;
+    font-size:12px;
+    -webkit-box-shadow: 0px 0px 30px #14314F;
+    box-shadow: 0px 0px 30px #14314F;
+}
+
+#payments-changes-container div {
+    border:1px solid white;
+    padding:10px;
+}
+
+.changes td { padding-left:10px; padding-right:10px; }
+
+.changes .id     { min-width:20px; }
+.changes .date   { width:120px; white-space:nowrap; }
+.changes .login  { width:60px; }
+.changes .status { width:100px; white-space:nowrap; }
+
+.done {  }
+
+/*** Select Date Area ***/
+
+#calendar { font-size:14px; }
+
+.selectdate-context { height:250px; }
+
+#selectdate_box { 
+    display:block; 
+    border:1px solid black; 
+    margin:10px auto;
+    width:260px;
+}
+
+@media (min-width: 1600px) {
+
+.info dd { max-width:1200px; }
+
+}
+
+@media (max-width: 1280px) {
+
+.info dd { max-width:800px; }
+
+}

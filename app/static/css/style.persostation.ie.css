@@ -1,0 +1,7 @@
+#header-section { width:850px; margin:0 auto; }
+.register-header div.page-header { width:775px; }
+
+div.register input[type="date"] { width:74px; padding:4px 10px 4px 10px; }
+
+div.register select  { line-height:18px; }
+div.register select option  { padding-top:4px; }

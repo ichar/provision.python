@@ -1,0 +1,874 @@
+﻿{% extends "common.html" %}
+
+{% import 'forms.html' as Forms %}
+{% import 'items.html' as Items %}
+
+{% block page_styles %}
+
+<link href="{{ url_for('static', filename='css/style') }}.basics.css{{ vsc }}" rel="stylesheet" type="text/css">
+<link href="{{ url_for('static', filename='css/style') }}.provision.css{{ vsc }}" rel="stylesheet" type="text/css">
+  {% if css %}
+<link href="{{ url_for('static', filename='css/style') }}.provision.{{ css }}.css{{ vsc }}" rel="stylesheet" type="text/css">
+  {% endif %}
+
+<style type="text/css">
+
+{%- if is_with_blink -%}
+
+tr.unread td.article {
+    -webkit-animation: blink_unread 1s linear infinite;
+    animation: blink_unread 1s linear infinite;
+}
+@-webkit-keyframes blink_unread {
+    0% { color: rgba(165, 42, 42, 1); }
+    50% { color: rgba(165, 42, 42, 0); }
+    100% { color: rgba(165, 42, 42, 1); }
+}
+@keyframes blink_unread {
+    0% { color: rgba(165, 42, 42, 1); }
+    50% { color: rgba(165, 42, 42, 0); }
+    100% { color: rgba(165, 42, 42, 1); }
+}
+
+{%- endif -%}
+
+{%- if is_no_price and is_explorer -%}
+
+td.article { width:100%; }
+td.seller  { white-space:nowrap; }
+
+{%- endif -%}
+
+div.provision-container .filename .x5 { background:rgb(120 140 180 / 30%); }
+
+td.article { width:40%; }
+td.account { min-width:50px; width:10%; }
+td.category { min-width:60px; width:140px; }
+td.office { min-width:100px; width:100px; }
+
+div.provision-filter #category { width:220px !important; }
+
+#order_equipment { height:50px; }
+#order_purpose { height:90px; }
+
+</style>
+
+{% endblock %}
+
+{% block starter %}
+
+<script src="{{ url_for('static', filename='js/db.controller.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/log.default.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/basics.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/provision.dialogs.min.js') }}{{ vsc }}"></script>
+
+<script src="{{ url_for('static', filename='js/provision.default.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/provision.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/tree.dialogs.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/reports.min.js') }}{{ vsc }}"></script>
+
+<script type="text/javascript">
+
+var is_full_container = {{ is_full_container }};
+
+var DEFAULT_SUBLINE_TEMPLATE = '';
+
+var is_no_price = {{ is_no_price }};
+var is_show_documents = {{ is_show_documents }};
+var is_no_line_open = {{ is_no_line_open }};
+
+var is_reference_edit_allowed = 1;
+
+var order_statuses = '{{ order_statuses|safe }}'.split(':');
+var form_caption = makeTempObject('{{ form_caption }}');
+
+current_context = 'purchase';
+placeholder = 'Найти номер документа...';
+
+</script> 
+
+{% endblock %}
+
+{% block data_section_content %}
+  
+  {%- set group = 'provision-orders' -%}
+  {%- set data = orders -%}
+
+  <div class="provision view-container sizable-container" id="line-content">
+    <div class="sizable-box" id="line-box">
+      <table class="view-data boxShadow1 {{ group }}" id="line-table" border="1">
+      <thead>
+      <tr>
+      {%- for column in config[columns] -%}
+        <td class="column header {{ config['headers'][column][2] }}" title="{{ config['headers'][column][3] }}">{{ config['headers'][column][0]|safe }}</td>
+      {%- endfor -%}
+      </tr>
+      </thead>
+
+      {%- for row in data -%}
+        {% if row.get('union') %}
+      <tr class="union"><td colspan="{{ config[columns]|length }}">
+        <div class="row-unreads">{{ _('You have unread documents total') }}: <span>{{ row['union'] }}.</span> {{ _('Please take care to attract them in time!') }}
+        </div></td></tr>
+        {% endif %}
+      <tr class="line {{ loop.cycle('odd', 'even') }} {{ row['selected'] }} {{ row['status'] }} {{ row['unread'] }}" id="row-line:{{ row['id'] }}:{{ loop.index }}">
+        {%- for column in config[columns] -%}
+        <td class="column {{ row['classes'].get(column) }}" {% if column in row['title'] %} title="{{ row['title'][column] }}" {% endif %}>{{ row[column]|safe }}</td>
+        {%- endfor -%}  
+      </tr>
+      {%- endfor %}
+      {%- if not data -%}
+      <tr><td colspan="{{ config[columns]|length }}"><div class="nodata">{{ _('No data') }}</div></td></tr>
+      {%- endif -%}
+      </table>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block pagination_title %}Всего документов/EUR[€]{% endblock %}
+
+{% block pagination_form %}
+
+    <input type="hidden" id="page" name="page" value="" />
+    <input type="hidden" id="order_id" name="order_id" value="{{ current_order[0] }}" />
+    <input type="hidden" id="review_id" name="review_id" value="{{ current_order[2] }}">
+    <input type="hidden" name="stock" value="{{ args['stock'][1] }}" />
+    <input type="hidden" name="subdivision" value="{{ args['subdivision'][1] }}" />
+    <input type="hidden" name="author" value="{{ args['author'][1] }}" />
+    <input type="hidden" name="category" value="{{ args['category'][1] }}" />
+    <input type="hidden" name="seller" value="{{ args['seller'][1] }}" />
+    <input type="hidden" name="date_from" value="{{ args['date_from'][1] }}" />
+    <input type="hidden" name="date_to" value="{{ args['date_to'][1] }}" />
+    <input type="hidden" name="status" value="{{ args['status'][1] }}" />
+    <input type="hidden" name="paid" value="{{ args['paid'][1] }}" />
+    <input type="hidden" id="searched" name="search" value="{{ search }}" />
+    <input type="hidden" name="reset" value="1" />
+    <input type="hidden" name="_ids" value="{{ args['ids'][1] }}" />
+
+{% endblock %}
+
+{% block filter %}
+
+  <div id="log-filter" class="provision-filter common-filter">
+    <div id="sidebar-filter-scroller">
+    <form action="{{ pagination['link'] }}" id="filter-form" method="POST">
+    
+    <input type="hidden" name="page" value="{{ pagination['current_page'] }}">
+    <input type="hidden" name="per-page" value="{{ pagination['per_page'] }}">
+    <input type="hidden" id="order_id" name="order_id" value="{{ current_order[0] }}">
+    <input type="hidden" id="review_id" name="review_id" value="{{ current_order[2] }}">
+    <input type="hidden" id="searched" name="search" value="{{ search }}">
+    <input type="hidden" id="reset_search" name="reset_search" value="0">
+    <input type="hidden" id="sort" name="sort" value="{{ pagination['sort']['current_sort'] }}">
+    <input type="hidden" id="position" name="position" value="{{ pagination['position'] }}">
+    <input type="hidden" id="sidebar" name="sidebar" value="{{ sidebar['state'] }}">
+    <input type="hidden" id="errors" value="{{ errors }}">
+    <input type="hidden" id="OK" name="OK" value="{{ OK }}">
+    <input type="hidden" id="command" name="command" value="">
+    <input type="hidden" id="window_scroll" name="window_scroll" value="{{ window_scroll }}">
+    {% if 'extra' in pagination %}<input type="hidden" name="__" value="1">{% endif %}
+
+  {% if current_user.is_nobody() %}
+
+    <input type="hidden" id="selected_data_menu_id" name="selected_data_menu_id" value="{{ selected_data_menu_id }}">
+
+  {% endif %}
+
+    <dt><div class="caption subdivision">Подразделение:</div></dt>
+    <dd>
+        <select class="field popup" id="subdivision" name="subdivision" onchange="javascript:MakeFilterSubmit(0);">
+          {% for subdivision in subdivisions -%}
+            <option value="{{ subdivision[0] }}" {% if args['subdivision'][1] == subdivision[0] %}selected{% endif %}>{{ subdivision[1] }}</option>
+          {%- endfor %}
+        </select>
+    </dd>
+
+    <dt><div class="caption author">Автор:</div></dt>
+    <dd>
+        <select class="field popup" id="author" name="author" onchange="javascript:MakeFilterSubmit(1);">
+          {% for author in authors -%}
+            <option value="{{ author[0] }}" {% if args['author'][1] == author[0] %}selected{% endif %}>{{ author[1] }}</option>
+          {%- endfor %}
+        </select>
+    </dd>
+
+    <dt><div class="caption category">Категория:</div></dt>
+    <dd>
+        <select class="field popup" id="category" name="category" onchange="javascript:MakeFilterSubmit(8);">
+          {% for category in categories -%}
+            <option value="{{ category[0] }}" {% if args['category'][1] == category[0] %}selected{% endif %}>{{ category[1] }}</option>
+          {%- endfor %}
+        </select>
+    </dd>
+
+    <dt><div class="caption stock">Класс продукции:</div></dt>
+    <dd>
+        <select class="field popup" id="stock" name="stock" onchange="javascript:MakeFilterSubmit(9);">
+          {% for stock in stocks -%}
+            <option value="{{ stock[0] }}" {% if args['stock'][1] == stock[0] %}selected{% endif %}>{{ stock[1]|safe }}</option>
+          {%- endfor %}
+        </select>
+    </dd>
+
+    <dt><div class="caption seller">Контрагент:</div></dt>
+    <dd>
+        <select class="field popup" id="seller" name="seller" onchange="javascript:MakeFilterSubmit(2);">
+          {% for seller in sellers -%}
+            <option value="{{ seller[0] }}" {% if args['seller'][1] == seller[0] %}selected{% endif %}>{{ seller[1] }}</option>
+          {%- endfor %}
+        </select>
+    </dd>
+
+    <dt><div class="caption currency">Валюта:</div></dt>
+    <dd>
+        <select class="field popup" id="currency" name="currency" onchange="javascript:MakeFilterSubmit(3);">
+          {% for currency in currencies -%}
+            <option value="{{ currency }}" {% if args['currency'][1] == currency %}selected{% endif %}>{{ currency }}</option>
+          {%- endfor %}
+        </select>
+    </dd>
+
+    <dt><div class="caption condition">Условия оплаты:</div></dt>
+    <dd>
+        <select class="field popup" id="condition" name="condition" onchange="javascript:MakeFilterSubmit(4);">
+          {% for condition in conditions -%}
+            <option value="{{ condition[0] }}" {% if args['condition'][1] == condition[0] %}selected{% endif %}>{{ condition[1] }}</option>
+          {%- endfor %}
+        </select>
+    </dd>
+
+    <dt><div class="caption orderdate">Дата документа c:</div></dt>
+    <dd>
+        <input class="field date" type="date" id="order-date-from" name="date_from" value="{{ args['date_from'][1] }}" 
+         onchange="javascript:MakeFilterSubmit(5);" placeholder="DD-MM-YYYY" data-date-format="DD MM YYYY">
+    </dd>
+
+    <dt><div class="caption orderdate">по:</div></dt>
+    <dd>
+        <input class="field date" type="date" id="order-date-to" name="date_to" value="{{ args['date_to'][1] }}" 
+         onchange="javascript:MakeFilterSubmit(5);" placeholder="DD-MM-YYYY" data-date-format="DD MM YYYY">
+    </dd>
+
+    <dt><div class="caption status">Статус:</div></dt>
+    <dd>
+        <select class="field popup" id="status" name="status" onchange="javascript:MakeFilterSubmit(6);">
+          {% for status in statuses -%}
+            <option value="{{ status[0] }}" {% if args['status'][1] == status[0] %}selected{% endif %}>{{ status[1] }}</option>
+          {%- endfor %}
+        </select>
+    </dd>
+
+    <dt><div class="caption paid">Оплата:</div></dt>
+    <dd>
+        <select class="field popup" id="paid" name="paid" onchange="javascript:MakeFilterSubmit(7);">
+          {% for paid in paids -%}
+            <option value="{{ paid[0] }}" {% if args['paid'][1] == paid[0] %}selected{% endif %}>{{ paid[1] }}</option>
+          {%- endfor %}
+        </select>
+    </dd>
+    
+    </form>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block control_panel %}
+
+  <div id="control-panel">
+
+  <div class="dropdown-container">
+
+  {% if current_user.is_anybody() %}
+    <div class="dropdown" id="admin-panel-container">
+      <a class="dropdown-link" id="admin-panel-dropdown">Панель управления</a>
+      <div class="dropdown-content" id="admin-panel">
+    {% if current_user.app_is_author %}
+        <button class="btn btn-warning" id="admin:create">Создать документ</button>
+        <button class="btn btn-success" id="admin:update">Редактировать документ</button>
+        <button class="btn btn-danger" id="admin:delete">Удалить документ</button>
+        <div class="line"><hr /></div>
+        <button class="btn btn-warning" id="admin:clone">Создать копию документа</button>
+        <div class="line"><hr /></div>
+    {% endif %}
+        <button class="btn btn-primary last-btn" id="admin:history">История изменения документа</button>
+      </div>
+    </div>
+  {% endif %}
+
+  {% if current_user.is_anybody() %}
+    <div class="dropdown" id="services-container">
+      <a class="dropdown-link" id="services-dropdown">Операции</a>
+      <div class="dropdown-content" id="services">
+    {% if current_user.app_is_purchase_manager or current_user.app_role_ceo or page.app_role_ceo %}
+        <button class="btn btn-success" id="service:checked-reviewers">Назначить рецензентов документа</button>
+    {% endif %}
+    {% if current_user.app_is_manager %}
+        <button class="btn btn-danger" id="service:decree">Подготовить поручение</button>
+        <div class="line"><hr /></div>
+    {% endif %}
+        <button class="btn btn-primary last-btn" id="service:stocklist">Номенклатурный классификатор</button>
+      </div>
+    </div>
+  {% endif %}
+
+  {% if current_user.is_anybody() %}
+    <div class="dropdown" id="actions-container">
+      <a class="dropdown-link" id="actions-dropdown">Команды</a>
+      <div class="dropdown-content" id="actions">
+        <button class="btn btn-primary" id="action:set-unread">Отметить как непрочитанное</button>
+        <button class="btn btn-success" id="action:set-read">Отметить как прочитанное</button>
+        <div class="line"><hr /></div>
+        <button class="btn btn-warning{% if is_mobile %} last-btn{% endif %}" id="action:set-all-read">Ознакомлен в полном объеме</button>
+    {% if not is_mobile %}
+        <div class="line"><hr /></div>
+        <button class="btn btn-primary last-btn" id="action:print-order">Печать документа</button>
+    {% endif %}
+      </div>
+    </div>
+  {% endif %}
+
+  </div>
+  
+  </div>
+
+{% endblock %}
+
+{% block dialogs_content %}
+
+<div class="common-dialog" id="review-confirm-container" title="{{ _('Review confirmation form') }}" style="display:none;">
+  <h3 id="order-request">{{ _('You have to assign due date for confirmation of the order.') }}</h3>
+  <div class="common-confirmation">
+    <h4 id="review-caption">{{ _('Review confirmation rules see in the application documentation.') }}</h4>
+    <div class="common-box common-panel">
+      <div id="review-box">
+        <div class="order-item common-next">
+
+          {{ Items.date('review_duedate', 'review_duedate', '', '', 'caption duedate', 'Срок обоснования', 1, '') }}
+
+        </div>
+
+        <h4>{{ _('Options') }}:</h4>
+
+        <label for="item-with-mail"><input type="checkbox" id="item-with-mail" value="1" checked>
+          <span>{{ _('Send email notifications to author') }}</span></label>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="provision_container_template" style="display:none;"> 
+  <div class="provision-container" id="__info-container"> 
+    <table class="info-container-box"><tr><td class="info-area">
+    <div class="view-content" id="__subline-content"> 
+      <div class="filename"></div> 
+  {% if is_show_menu %}
+      <div class="data-menu block" id="__tab-content"> 
+        <div class="menu" id="__data-menu-reviews">Согласования</div> 
+        <div class="menu" id="__data-menu-params">Параметры</div> 
+    {% if current_user.app_is_purchase_manager or current_user.app_is_payments or current_user.app_is_author  %}
+        <div class="menu" id="__data-menu-items">Номенклатура</div> 
+    {% endif %}
+    {% if current_user.app_is_purchase_manager or current_user.app_is_payments_manager  %}
+        <div class="menu" id="__data-menu-payments">Платежи</div> 
+    {% endif %}
+    {% if is_show_documents %}
+        <div class="menu" id="__data-menu-documents">Вложения</div> 
+    {% endif %}
+        <div class="menu" id="__data-menu-comments">Комментарии</div> 
+        <div class="menu" id="__data-menu-statuses">Статус</div> 
+      </div>
+  {% endif %}
+      <div class="view-content" id="__reviews-content">
+        <div class="cell">
+          <div id="__subline-data"> 
+            <h3>Согласования по документу:</h3> 
+            <div class="view-container inline p100" id="__MAINDATA"></div> 
+          </div>
+        </div>
+        <div class="cell">
+          <div id="__review-info-data"> 
+            <h3>{{ _('Your resolution') }}</span>:</h3> 
+            <div class="review-container"> 
+              <div id="__review_area">
+                <div class="view-container inline review"><textarea class="review_note" id="__note" name="note"></textarea></div>
+              </div> 
+              <div class="data-buttons data-buttons-inline" id="__review-data-buttons"> 
+  {% if current_user.app_is_manager %}
+                <button class="btn btn-primary" id="__REVIEW_CONFIRM">Обосновать</button> 
+                <button class="btn btn-success" id="__REVIEW_ACCEPT">Подписать</button> 
+                <button class="btn btn-danger" id="__REVIEW_REJECT">Отказать</button> 
+  {% else %}
+                <button class="btn btn-success" id="__REVIEW_ACCEPT">Подписать</button> 
+  {% endif %}
+  {% if (current_user.app_is_manager or current_user.app_is_consultant or current_user.app_is_author) and not is_frame %}
+                <button class="btn btn-info" id="__REVIEW_CONFIRMATION">Информация</button>
+  {% elif current_user.app_is_author %}
+                <button class="btn btn-info data-buttons-last" id="__REVIEW_CONFIRMATION">Информация</button>
+  {% endif %}
+  {% if current_user.app_role_cao %}
+                <button class="btn btn-warning data-buttons-last" id="__REVIEW_PAID">Оплачено</button>
+  {% endif %}
+              </div>
+            </div>
+          </div>
+        </div> 
+      </div> 
+  {% if is_show_menu %}
+      <div class="view-content tab" id="__params-content" style="display:none;">
+        <div class="view-content"> 
+          <div class="cell">
+            <h3>Параметры заказа:</h3>
+            <div class="view-container inline p100" id="__params-container"></div> 
+          </div>
+    {% if current_user.app_is_payments_manager or current_user.app_is_author %}
+          <div class="cell">
+            <div class="tab-box params-container">
+              <div class="provision-tab-items" id="__params-items">
+                <div class="tab-item common-next">
+
+              {{ Items.combo('__param', '', params, 'caption param', 'Наименование', 1) }}
+
+                </div>
+                <div class="tab-item common-next">
+
+              {{ Items.input('__param_value', '', 'text', '', 'caption value', 'Значение') }}
+
+                </div>
+              </div>
+              <div class="data-buttons" id="__params-data-buttons"> 
+                <button class="btn btn-primary" id="__ADD_PARAM">Добавить</button> 
+                <button class="btn btn-primary" id="__EDIT_PARAM">Изменить</button> 
+                <button class="btn btn-primary" id="__SAVE_PARAM" style="display:none;">Сохранить</button> 
+                <button class="btn btn-primary" id="__CANCEL_PARAM" style="display:none;">Отменить</button> 
+                <button class="btn btn-primary" id="__DEL_PARAM">Удалить</button> 
+              </div>
+            </div>
+          </div>
+    {% endif %}
+        </div>
+      </div> 
+      <div class="view-content tab" id="__items-content" style="display:none;">
+        <div class="view-content"> 
+          <div class="cell">
+            <h3>Товарная номенклатура:</h3>
+            <div class="view-container inline p100" id="__items-container"></div> 
+          </div>
+    {% if current_user.app_is_payments_manager or current_user.app_is_author %}
+          <div class="cell">
+            <div class="tab-box items-container __edit-box">
+              <div class="provision-tab-items" id="__items-items">
+                <div class="tab-item common-next">
+
+              {{ Items.textarea('__item_name', '', '', 'caption name', 'Наименование', 0) }}
+
+                </div>
+                <div class="tab-item common-next">
+
+              {{ Items.number('__item_qty', '', '', '', 'caption qty', 'Количество', 1) }}
+
+                </div>
+                <div class="tab-item common-next">
+
+              {{ Items.input('__item_units', '', 'text', '', 'caption units', 'Ед. измерения', 1) }}
+
+                </div>
+                <div class="tab-item common-next">
+
+              {{ Items.input('__item_total', '', 'text', '', 'caption', 'Сумма') }}
+
+                </div>
+                <div class="tab-item common-next">
+
+              {{ Items.select('__item_currency', '', currencies, 'caption', 'Валюта', '') }}
+
+                </div>
+                <div class="tab-item common-next">
+
+              {{ Items.input('__item_account', '', 'text', '', 'caption', 'Номер заявки на расход в 1C') }}
+
+                </div>
+              </div>
+              <div class="data-buttons" id="__items-data-buttons"> 
+                <button class="btn btn-primary" id="__ADD_ITEM">Добавить</button> 
+                <button class="btn btn-primary" id="__EDIT_ITEM">Изменить</button> 
+                <button class="btn btn-primary" id="__SAVE_ITEM" style="display:none;">Сохранить</button> 
+                <button class="btn btn-primary" id="__CANCEL_ITEM" style="display:none;">Отменить</button> 
+                <button class="btn btn-primary" id="__DEL_ITEM">Удалить</button> 
+              </div>
+            </div>
+          </div>
+    {% endif %}
+        </div>
+      </div> 
+      <div class="view-content tab" id="__payments-content" style="display:none;">
+        <div class="view-content"> 
+          <div class="cell">
+            <h3>График платежей:</h3>
+            <div class="view-container inline p100" id="__payments-container"></div> 
+          </div>
+    {% if current_user.app_is_purchase_manager or current_user.app_is_payments_manager %}
+          <div class="cell">
+            <div class="tab-box payments-container">
+              <div class="provision-tab-items" id="__payments-items">
+                <div class="tab-item common-next">
+
+              {{ Items.date('__payment_date', '', '', '', 'caption', 'Дата платежа') }}
+
+                </div>
+                <div class="tab-item common-next">
+
+              {{ Items.input('__payment_total', '', 'text', '', 'caption', 'Сумма (в валюте платежа)') }}
+
+                </div>
+                <div class="tab-item common-next">
+
+              {{ Items.select('__payment_currency', '', currencies, 'caption', 'Валюта', '') }}
+
+                </div>
+                <div class="tab-item common-next">
+
+              {{ Items.input('__payment_rate', '', 'text', '', 'caption', 'Курс ЦБ', 1) }}
+
+                </div>
+                <div class="tab-item common-next">
+
+              {{ Items.combo('__payment', '', payments, 'caption payment', 'Назначение', 1) }}
+
+                </div>
+                <div class="tab-item common-next">
+
+              {{ Items.combo('__payment_status', '', payment_statuses, 'caption payment_status', 'Статус', 0) }}
+
+                </div>
+                <div class="tab-item common-next">
+
+              {{ Items.textarea('__payment_comment', '', '', 'caption comment', 'Примечание', 0) }}
+
+                </div>
+              </div>
+              <div class="data-buttons" id="__payments-data-buttons"> 
+                <button class="btn btn-primary" id="__ADD_PAYMENT">Добавить</button> 
+                <button class="btn btn-primary" id="__EDIT_PAYMENT">Изменить</button> 
+                <button class="btn btn-primary" id="__SAVE_PAYMENT" style="display:none;">Сохранить</button> 
+                <button class="btn btn-primary" id="__CANCEL_PAYMENT" style="display:none;">Отменить</button> 
+                <button class="btn btn-primary" id="__DEL_PAYMENT">Удалить</button> 
+              </div>
+            </div>
+          </div>
+    {% endif %}
+        </div>
+      </div>
+      <div class="view-content tab" id="__comments-content" style="display:none;">
+        <div class="view-content"> 
+          <div class="cell">
+            <h3>Комментарии подразделений:</h3>
+            <div class="view-container inline p100" id="__comments-container"></div> 
+          </div>
+    {% if current_user.app_is_payments_manager or current_user.app_is_consultant or current_user.app_is_author %}
+          <div class="cell">
+            <div class="tab-box comments-container">
+              <div class="provision-tab-items" id="__comments-items">
+                <div class="tab-item common-next">
+
+              {{ Items.combo('__comment', '', comments, 'caption comment', 'Подразделение', 1) }}
+
+                </div>
+                <div class="tab-item common-next">
+
+              {{ Items.textarea('__comment_value', '', '', 'caption', 'Комментарий', 0, '') }}
+
+                </div>
+              </div>
+              <div class="data-buttons" id="__comments-data-buttons"> 
+                <button class="btn btn-primary" id="__ADD_COMMENT">Добавить</button> 
+              </div>
+            </div>
+          </div>
+    {% endif %}
+        </div>
+      </div>
+  {% if is_show_documents %}
+      <div class="view-content tab" id="__documents-content" style="display:none;">
+        <div class="view-content"> 
+          <div class="cell">
+            <h3>Вложенные документы:</h3>
+            <div class="view-container inline p100" id="__documents-container"></div> 
+          </div>
+    {% if current_user.app_is_manager and current_user.app_is_author %}
+          <div class="cell">
+            <div class="tab-box documents-container">
+              <div class="provision-tab-items" id="__documents-items">
+                <form class="common-form" id="__document_form" method="POST" enctype="multipart/form-data">
+                <div class="tab-item common-next">
+
+              {{ Items.fileupload('__document_filename', '__document_filename', 'uploadBox', 'Файл документа', 'caption', ('default', _('>>'), '__uploadDocument'), 0) }}
+
+                </div>
+                <div class="tab-item common-next">
+
+              {{ Items.textarea('__document_value', '', '', 'caption', 'Содержание', 0, '') }}
+
+                </div>
+                </form>
+              </div>
+              <div class="data-buttons" id="__documents-data-buttons"> 
+                <button class="btn btn-primary" id="__ADD_DOCUMENT">Добавить</button> 
+                <button class="btn btn-primary" id="__DEL_DOCUMENT">Удалить</button> 
+              </div>
+            </div>
+          </div>
+    {% endif %}
+        </div>
+      </div>
+  {% endif %}
+      <div class="view-content tab" id="__statuses-content" style="display:none;">
+        <div class="view-content"> 
+          <div class="cell">
+            <h3>Текущий статус документа:</h3>
+            <div id="__status-info"></div>
+          </div>
+    {% if current_user.app_is_purchase_manager %}
+          <div class="cell">
+            <div class="tab-box statuses-container">
+              <div class="data-buttons" id="__statuses-data-buttons"> 
+                <button class="btn btn-primary" id="__STATUS_WORK">В работу</button> 
+                <button class="btn btn-primary" id="__STATUS_REVIEW">На согласование</button> 
+                <button class="btn btn-primary" id="__STATUS_EXECUTE">На исполнение</button> 
+                <button class="btn btn-primary" id="__STATUS_FINISH">Исполнено</button> 
+                <button class="btn btn-primary" id="__STATUS_ARCHIVE">В архив</button> 
+              </div>
+            </div>
+          </div>
+    {% endif %}
+        </div>
+      </div>
+  {% endif %}
+    </div>
+    </td><td class="dates-area">
+      <div class="view-content" id="__dates-area" style="display:none;">
+        <div id="__dates-box"></div> 
+      </div>
+    </td></tr></table>
+  </div>
+</div>
+
+<div class="common-dialog" id="provisionuploader-confirm-container" title="{{ _('Provision uploader form') }}" style="display:none;">
+  <h3 id="status-request">{{ _('Do you wish to upload a file of orders? Please, confirm.') }}</h3>
+  <div class="common-confirmation">
+    <h4>{{ _('Provision uploader file format see in the application documentation.') }}</h4>
+    <div class="common-box common-panel" id="provisionuploader-box">
+      <form action="{{ pagination['link'] }}" class="common-form" id="provisionuploader-form" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="position" value="{{ pagination['position'] }}">
+        <input type="hidden" name="sidebar" value="{{ sidebar['state'] }}">
+        <input type="hidden" id="OK" name="OK" value="{{ OK }}">
+        <input type="hidden" id="command" name="command" value="">
+
+      {{ Items.fileupload('filename', 'filename', 'uploadBox', '', '', ('primary', _('Upload'), 'uploadButton'), 0) }}
+
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="common-dialog" id="order-confirm-container" title="" style="display:none;">
+  <h3>{{ _('Input form items to generate a Purchase document.') }}</h3>
+  <div class="common-confirmation">
+    <h4>{{ _('Provision Order format see in the application documentation.') }}</h4>
+    <div class="common-box common-panel">
+      <div id="order-box">
+        <form action="{{ pagination['link'] }}" class="common-form" id="order-form" method="POST">
+          <input type="hidden" name="page" value="{{ pagination['current_page'] }}">
+          <input type="hidden" name="per-page" value="{{ pagination['per_page'] }}">
+          <input type="hidden" id="order_id" name="order_id" value="">
+          <input type="hidden" name="position" value="{{ pagination['position'] }}">
+          <input type="hidden" name="sidebar" value="{{ sidebar['state'] }}">
+          <input type="hidden" id="OK" name="OK" value="{{ OK }}">
+          <input type="hidden" id="command" name="command" value="">
+          <input type="hidden" id="window_scroll" name="window_scroll" value="">
+
+        <div class="order-item common-next">
+
+          {{ Items.textarea('order_article', 'order_article', '', 'caption article', 'Наименование документа', 0, '') }}
+
+        </div>
+        <div class="order-item common-next">
+
+          {{ Items.input('order_account', 'order_account', 'text', '', 'caption', 'Регистрационный номер', '') }}
+
+        </div>
+        <div class="order-item common-next">
+
+          {{ Items.textarea('order_equipment', 'order_equipment', '', 'caption equipment', 'Предмет соглашения, продукция, условия поставки', 0, '') }}
+
+        </div>
+        <div class="order-item common-next">
+
+          {{ Items.combo('order_category', 'order_category', categories, 'caption category', 'Категория документа', current_user.app_is_purchase_manager and 1 or 0, '') }}
+
+        </div>
+        <div class="order-item common-next">
+
+          {{ Items.textarea('order_purpose', 'order_purpose', '', 'caption purpose', 'Обоснование целесообразности заключения соглашения', 0, '', 1, links_pages) }}
+
+        </div>
+        <div class="order-item common-next">
+
+          {{ Items.date('order_duedate', 'order_duedate', '', '', 'caption duedate', 'Срок действия', 1, '') }}
+
+        </div>
+        <div class="order-item common-next">
+
+          {{ Items.combo('order_subdivision', 'order_subdivision', subdivisions, 'caption subdivision', 'ПОДРАЗДЕЛЕНИЕ', 1, '') }}
+
+        </div>
+
+        <hr class="x1">
+        
+        <div class="order-item common-next">
+
+          {{ Items.combo('order_author', 'order_author', users, 'caption author', 'Автор документа', 0, '') }}
+
+        </div>
+        <div class="order-item common-next">
+
+          {{ Items.input('order_price', 'order_price', 'text', '', 'caption', 'Лимит', '') }}
+
+        </div>
+        <div class="order-item common-next">
+
+          {{ Items.select('order_currency', 'order_currency', currencies, 'caption', 'Валюта', '') }}
+
+        </div>
+        <div class="order-item common-next">
+
+          {{ Items.combo('order_condition', 'order_condition', conditions, 'caption condition', 'Условия оплаты', 1, '') }}
+
+        </div>
+
+        <hr class="x1">
+
+        <div class="order-item common-next">
+
+          {{ Items.combo('order_seller', 'order_seller', sellers, 'caption seller', 'КОНТРАГЕНТ', 1, '') }}
+
+        </div>
+
+        </form>
+      </div>    
+    </div>
+  </div>
+</div>
+
+<div class="common-dialog" id="decree-confirm-container" title="{{ _('Decree confirmation form') }}" style="display:none;">
+  <h3 id="decree-request">{{ _('Input form items to generate a decree to the document') }}<span class="order"></span></h3>
+  <div class="common-confirmation">
+    <h4>{{ _('Provision Decree format see in the application documentation.') }}</h4>
+    <div class="common-box common-panel">
+      <div id="decree-box">
+        <form action="{{ pagination['link'] }}" class="common-form" id="decree-form" method="POST">
+          <input type="hidden" id="command" name="command" value="">
+          <input type="hidden" id="decree_status" value="0">
+
+      {% if page.app_role_ceo %}
+
+        <div class="decree-item common-next">
+
+          {{ Items.combo('decree_author', 'decree_author', users, 'caption author', _('Decree author role delegation'), 0, '') }}
+
+        </div>
+
+      {% endif %}
+
+        <div class="decree-item common-next">
+
+          {{ Items.input('decree_title', 'decree_title', 'text', '', 'caption', _('Decree title'), 0, '') }}
+
+        </div>
+        <div class="decree-item common-next">
+
+          {{ Items.textarea('decree_note', 'decree_note', '', 'caption note', _('Decree note'), 0, '') }}
+
+        </div>
+        <div class="decree-item common-next">
+
+          {{ Items.date('decree_duedate', 'decree_duedate', '', '', 'caption duedate', _('Decree duedate'), 1, '') }}
+
+        </div>
+        <div class="decree-item common-next">
+
+          {{ Items.combo('decree_executor', 'decree_executor', users, 'caption reviewer', _('Executor'), 0, '') }}
+
+        </div>
+        <hr>
+        <div class="decree-item common-next">
+
+          {{ Items.textarea('decree_report', 'decree_report', '', 'caption report', _('Decree report'), 0, '') }}
+
+        </div>
+
+        </form>
+      </div>    
+    </div>
+  </div>
+</div>
+
+<div class="common-dialog" id="history-confirm-container" title="{{ _('Order History information form') }}" style="display:none;">
+  <h3 id="order-request">{{ _('You can inspect parameters changes of the document.') }}</h3>
+  <div class="common-confirmation">
+    <h4 id="history-caption">{{ _('History information rules see in the application documentation.') }}</h4>
+    <div class="common-box common-panel">
+      <div id="history-box"></div>
+    </div>
+  </div>
+</div>
+
+<div class="common-dialog" id="checked-reviewers-confirm-container" title="{{ _('Checked Reviewers confirmation form') }}" style="display:none;">
+  <h3 id="checked-reviewers-request">{{ _('You can set reviewer of the order.') }}</h3>
+  <div class="common-confirmation">
+    <h4 id="checked-reviewers-caption">{{ _('Checked Reviewers rules see in the application documentation.') }}</h4>
+    <div class="common-panel" role="panel" id="checked-reviewers-control">
+      <label for="reviewers-check-all">
+        <input type="checkbox" id="reviewers-check-all" value="1"><span>{{ _('All reviewers') }}</span></label>
+      <div class="accord" id="item-reviewers-list">
+        <table border="0">
+        <tr>
+          <td>
+            <div class="accord-data accord-left panel checked-reviewers-panel disabled" id="checked-reviewers-left">
+              <ul>
+          {%- for reviewer in reviewers -%}
+              <li id="reviewer:{{ reviewer[0] }}" name="cid:{{ reviewer[0] }}" data="{{ reviewer[1] }}">
+                <span class="reviewer" id="reviewer-name">{{ reviewer[1] }}</span></li>
+          {%- endfor -%}
+              </ul>
+            </div>
+          </td><td>
+            <div class="accord-commands" id="checked-reviewers-commands">
+              <input class="disabled" type="button" id="checked-reviewers-include" value=" >> " />
+              <br><br>
+              <input class="disabled" type="button" id="checked-reviewers-exclude" value=" << " />
+            </div>
+          </td><td>
+            <div class="accord-data accord-right panel checked-reviewers-panel disabled" id="checked-reviewers-right">
+              <ul></ul>
+            </div>
+          </td>
+        </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="common-dialog" id="reference-container" title="{{ _('Reference form') }}" style="display:none;">
+  <h3 id="reference-title"></h3>
+</div>
+
+<div class="common-dialog" id="reviewer-dialog" title="{{ _('Reviewer dialog') }}" style="display:none;">
+  <div id="reviewer-container">
+    <div class="reviewer-box" id="reviewer-box"></div>
+  </div>
+</div>
+
+{% endblock %}

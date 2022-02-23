@@ -1,0 +1,185 @@
+
+/*** Admin Page  ***/
+
+body { overflow-y:inherit; }
+
+#admin-content { width:100%; border:0px solid #000; }
+
+#user-view { min-width:750px; vertical-align:top; margin: 0 0 10px 0; }
+#user-view, #user-form-content { border:0px solid #000; }
+
+table.users { 
+    width:100%;
+    font-size:12px;
+}
+
+/*** Admin Forms ***/
+
+#user-form-content { 
+    display:inline-block;
+    vertical-align:top;
+    width:535px; 
+    padding:10px; 
+    border:1px solid #ccc;
+    margin-bottom:10px;
+}
+
+#view-commands { 
+    display:inline-block; 
+    margin: 0 0 20px 10px; 
+}
+#view-commands form { margin:0; }
+
+#user-form { margin:0; }
+#user-form dl { margin:0; padding:0; }
+#user-form dt, #user-form dd { display:inline-block; }
+#user-form dt { width:116px; }
+#user-form label, #user-form span.mandatory { display:inline-block; }
+#user-form span.mandatory { position:relative; top:-3px; font:normal 10px Tahoma; color:#B00; }
+#user-form ul { margin:0; }
+#user-form li { list-style-type:none; background-color: #C86F6D; font-size:12px; padding: 0 10px 0 10px; color:white; margin-right:12px; }
+
+#user-form-content div.error { padding:10px; font-size:14px; text-align:center; margin-bottom:10px; }
+
+#user-form-content input[type="submit"] { margin-bottom:1px !important; }
+#user-form-content input[type="text"] { width:390px; }
+
+#profile-content {
+    display:inline-block;
+    border:1px solid #ccc;
+    min-width:555px;
+    min-height:366px; 
+}
+
+div.profile-form-content { 
+    margin:10px; 
+}
+
+div.profile-head {
+    border:0px solid #000;
+}
+
+div.profile-head ul { padding:0; margin:0; }
+div.profile-head li { 
+    
+    display:inline-block;
+    list-style-type:none;
+    font-size:12px;
+    border:1px solid #aaa;
+    text-align:center;
+    padding:2px 10px 2px 10px;
+}
+
+div.profile-head li.selected { 
+    background-color:#e7e7e7;
+    border-bottom:1px solid #e7e7e7;
+}
+
+div.profile-head a { 
+    white-space:nowrap;
+    cursor:pointer;
+    line-height:20px;
+    color:#402000;
+    font-weight:normal;
+    font-size:11px;
+}
+
+div.profile-head a:link, div.profile-head a:hover, div.profile-head a:visited, div.profile-head a:active { 
+    text-decoration:none;
+}
+
+div.profile-data {
+    border:1px solid #aaa;
+    margin-top:-1px;
+    padding:10px;
+}
+
+div.profile-data ul { padding:0; margin:0; }
+div.profile-data li {
+    border:1px solid #aaa;
+    margin:1px 0 1px 0;
+    line-height:18px;
+}
+
+div.profile-data-panel {
+    border:1px solid #aaa;
+    overflow-x:hidden; 
+    overflow-y:auto;
+    width:220px;
+    height:232px; /* one item 21px */
+    vertical-align:top;
+}
+
+div.profile-data-panel li { padding:0 10px 0 10px; cursor:pointer; }
+
+#profile-clients-left, #profile-clients-commands, #profile-clients-right {
+    display:inline-block;
+}
+
+#profile-clients-left, #profile-clients-right {
+    font-size:12px;
+    color:#333;
+}
+
+#profile-clients-commands {
+    margin:85px 10px 0 10px;
+}
+
+#photo_image { height:272px; }
+
+div.profile-photo div { 
+    display:inline-block; 
+    vertical-align:top; 
+}
+div.profile-photo input[type="file"] {
+    display:none;
+}
+div.profile-photo div.photo_buttons_panel { 
+    margin:60px 0 0 40px; 
+}
+div.profile-photo label.photo_button {
+    border:1px solid #ccc;
+    border-radius:4px;
+    display:inline-block;
+    padding:6px 12px;
+    cursor:pointer;
+    color:white;
+    width:66px;
+    text-align:center;
+}
+
+#photo_upload { background-color:#406f40; }
+#photo_delete { background-color:#b85050; }
+
+div.profile-settings h3 { font:bold 14px Tahoma, Arial; }
+div.profile-settings div.profile-settings-item { 
+    padding:0 10px 0 10px; 
+}
+div.profile-settings-item dt { 
+    width:160px; 
+}
+div.profile-settings-item > label > span { font-size:12px; }
+
+div.profile-settings-item dt, div.profile-settings-item dd { display:inline-block; }
+div.profile-settings-item div.caption { 
+    font-weight:normal; 
+    margin-left:10px;
+    font-size:12px;
+}
+
+div.profile-settings .popup { 
+    margin-bottom:5px; 
+}
+div.profile-settings input.pagesize { 
+    width:40px; 
+}
+div.profile-settings select.subdivision { 
+
+}
+div.profile-settings input.base_url {
+    width:300px; 
+}
+
+#message-box .caption { margin:0 0 10px 10px; }
+#message { width:707px; height:145px; }
+#subject { width:707px; }

@@ -1,0 +1,30 @@
+{% extends "simple.html" %}
+
+{% import 'forms.html' as Forms %}
+
+{% block title %}WebPerso Finance menu{% endblock %}
+
+{% block starter %}
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+});
+
+</script> 
+
+{% endblock %}
+
+{% block page_content %}
+
+<div class="page-header">
+  <div class="menu" id="menu">
+
+  <h2>{{ message }}</h2>
+
+  {{ Forms.form('default', 'home', navigation) }}
+
+  </div>
+</div>
+
+{% endblock %}

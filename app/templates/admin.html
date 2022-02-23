@@ -1,0 +1,404 @@
+{% extends "common.html" %}
+
+{% import 'forms.html' as Forms %}
+{% import 'items.html' as Items %}
+
+{% block page_styles %}
+
+<link href="{{ url_for('static', filename='css/style') }}.admin.css{{ vsc }}" rel="stylesheet" type="text/css">
+
+{% endblock %}
+
+{% block starter %}
+
+<script src="{{ url_for('static', filename='js/db.controller.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/log.default.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/admin.dialogs.min.js') }}{{ vsc }}"></script>
+
+<script src="{{ url_for('static', filename='js/admin.min.js') }}{{ vsc }}"></script>
+
+<script type="text/javascript">
+
+// Bankperso profile clients
+var is_profile_clients = {{ app_bankperso }};
+
+</script> 
+
+{% endblock %}
+
+{% if current_user.is_superuser() %}
+
+{% block data_section_content %}
+
+  {{ Forms.lines('users', users, config) }}
+
+{% endblock %}
+
+{% block info_section_content %}
+
+  <div id="view-commands">
+    <form action="{{ base }}" id="command-form" method="post">
+
+      <input type="hidden" name="page" value="{{ pagination['current_page'] }}">
+      <input type="hidden" name="per-page" value="{{ pagination['per_page'] }}">
+      <input type="hidden" id="position" name="position" value="{{ pagination['position'] }}">
+      <input type="hidden" id="user_id" name="user_id" value="{{ user[0] }}" />
+      <input type="hidden" id="command" name="command" value="" />
+      <input type="hidden" id="OK" name="OK" value="{{ OK }}">
+      <input type="hidden" name="sidebar" value="" />
+
+    </form>
+    <button class="btn btn-info" id="add">{{ _('Add') }}</button>
+    <button class="btn btn-info" id="delete">{{ _('Delete') }}</button>
+  </div>
+
+  <div id="info-container">
+    <div class="form-container" id="user-form-content">
+
+      {%- if errors %}
+        {% for error in errors -%}
+          <div class="error">{{ error }}</div>
+        {%- endfor -%}
+      {%- endif %}
+
+    <form action="index" id="user-form" method="POST" onSubmit="return $onUserFormSubmit(this);">
+
+      <input type="hidden" name="page" value="{{ pagination['current_page'] }}">
+      <input type="hidden" name="per-page" value="{{ pagination['per_page'] }}">
+      <input type="hidden" id="position" name="position" value="{{ pagination['position'] }}">
+      <input type="hidden" id="user_id" name="user_id" value="" />
+      <input type="hidden" id="photo" name="photo" value="" />
+      <input type="hidden" id="profile_clients" name="profile_clients" value="" />
+      <input type="hidden" id="settings" name="settings" value="" />
+      <input type="hidden" id="privileges" name="privileges" value="" />
+      <input type="hidden" id="sort" name="sort" value="{{ pagination['sort']['current_sort'] }}">
+      <input type="hidden" name="q:subdivision_id" value="{{ args['subdivision'][1] }}" />
+      <input type="hidden" name="q:app_role_id" value="{{ args['app_role'][1] }}" />
+      <input type="hidden" name="q:role_id" value="{{ args['role'][1] }}" />
+      <input type="hidden" name="q:confirmed" value="{{ args['confirmed'][1] }}" />
+      <input type="hidden" name="q:enabled" value="{{ args['enabled'][1] }}" />
+      <input type="hidden" name="q:app_privilege" value="{{ args['app_privilege'][1] }}" />
+      <input type="hidden" id="searched" name="search" value="{{ search }}">
+      <input type="hidden" name="default_confirmed" value="{{ args['confirmed'][1] }}" />
+      <input type="hidden" name="default_enabled" value="{{ args['enabled'][1] }}" />
+      <input type="hidden" name="sidebar" value="" />
+
+    {{ Forms.form('admin', 'user', forms['user']) }}
+
+      <input class="btn btn-danger" type="submit" id="save" name="save" value="{{ _('Save') }}" disabled />
+
+    </form>
+
+    </div>
+
+    <div class="data-container" id="profile-content">
+
+      <h3>{{ _('Membership profile') }} <span class="filename" id="profile-name"></span>:</h3>
+      <div class="profile-form-content">
+        <div class="profile-head" id="profile-container">
+          <ul>
+            <li role="tab"><a class="profile" href_="#profile-clients" id="profile-clients_tab">{{ _('Client segment') }}</a></li>
+            <li class="selected" role="tab"><a class="profile" href_="#profile-photo" id="profile-photo_tab">{{ _('Photos') }}</a></li>
+            <li role="tab"><a class="profile" href_="#profile-settings" id="profile-settings_tab">{{ _('Page Settings') }}</a></li>
+            <li role="tab"><a class="profile" href_="#profile-privileges" id="profile-privileges_tab">{{ _('Privileges') }}</a></li>
+          </ul>
+        </div>
+
+        <div class="profile-data">
+          <!-- User's Clients Profile  -->
+          <div class="profile-clients common-panel" role="panel" id="profile-clients" style="display:none;">
+            <label for="item-clients-all"><input type="checkbox" id="item-clients-all" value="1" checked><span>{{ _('All clients') }}</span></label>
+            <div id="item-clients-list">
+              <div class="profile-data-panel disabled" id="profile-clients-left">
+                <ul>
+                {%- for client in clients -%}
+                  <li id="bank:{{ client['TID'] }}" name="cid:{{ client['TID'] }}" data="{{ client['CName'] }}">
+                    <span class="client" id="profile-name">{{ client['CName'] }}</span></li>
+                {%- endfor -%}
+                </ul>
+              </div>
+              <div id="profile-clients-commands">
+                <input class="disabled" type="button" id="profile-clients-include" value=" >> " />
+                <br><br>
+                <input class="disabled" type="button" id="profile-clients-exclude" value=" << " />
+              </div>
+              <div class="profile-data-panel disabled" id="profile-clients-right"><ul></ul></div>
+            </div>
+          </div>
+
+          <!-- Photo  -->
+          <div class="profile-photo common-panel" id="profile-photo" role="panel">
+            <div class="p50">
+              <img id="photo_image" src="{{ photo }}" title="{{ _('Photo') }}" alt="">
+              <input type="file" id="photo_file" value="" accept='image/*' onchange="javascript:readFile(event);">
+            </div><div class="p50">
+              <div class="photo_buttons_panel">
+                <label class="photo_button {% if not user[0] %}disabled{% endif %}" id="photo_upload" for="photo_file">{{ _('Upload') }}</label>
+                <label class="photo_button {% if not user[0] %}disabled{% endif %}" id="photo_delete">{{ _('Delete') }}</label>
+              </div>  
+            </div>
+          </div>
+          
+          <!-- Page Settings -->
+          <div class="profile-settings common-panel" id="profile-settings" role="panel" style="display:none;">
+            <h3>{{ _('Pagesize settings') }}:</h3>
+            <div class="profile-settings-item">
+              <dt><div class="caption">{{ _('Pagesize bankperso') }}:</div></dt>
+              <dd><input class="popup settings pagesize" id="pagesize_bankperso" type="number" value="{{ settings[0] }}" step="5"></dd>
+            </div>
+            <div class="profile-settings-item">
+              <dt><div class="caption">{{ _('Pagesize cards') }}:</div></dt>
+              <dd><input class="popup settings pagesize" id="pagesize_cards" type="number" value="{{ settings[1] }}" step="5"></dd>
+            </div>
+            <div class="profile-settings-item">
+              <dt><div class="caption">{{ _('Pagesize persostation') }}:</div></dt>
+              <dd><input class="popup settings pagesize" id="pagesize_persostation" type="number" value="{{ settings[2] }}" step="5"></dd>
+            </div>
+            <div class="profile-settings-item">
+              <dt><div class="caption">{{ _('Pagesize config') }}:</div></dt>
+              <dd><input class="popup settings pagesize" id="pagesize_config" type="number" value="{{ settings[3] }}" step="5"></dd>
+            </div>
+            <div class="profile-settings-item">
+              <dt><div class="caption">{{ _('Pagesize provision') }}:</div></dt>
+              <dd><input class="popup settings pagesize" id="pagesize_provision" type="number" value="{{ settings[4] }}" step="5"></dd>
+            </div>
+            <h3>{{ _('Options') }}:</h3>
+            <div class="profile-settings-item">
+              <label for="sidebar_collapse">
+                <input class="options settings" type="checkbox" id="sidebar_collapse" value="1" {% if settings[5] %}checked{% endif %}>
+                <span>{{ _('Sidebar collapse') }}</span></label>
+              <label for="use_extra_infopanel">
+                <input class="options settings" type="checkbox" id="use_extra_infopanel" value="1" {% if settings[6] %}checked{% endif %}>
+                <span>{{ _('Use extra infopanel') }}</span></label>
+            </div>
+          </div>
+
+          <!-- Privileges  -->
+          <div class="profile-settings common-panel" id="profile-privileges" role="panel" style="display:none;">
+            <h3>{{ _('Profile settings') }}:</h3>
+            <div class="profile-settings-item">
+              <dt><div class="caption">{{ _('Subdivision') }}:</div></dt>
+              <dd>
+                <select class="popup privileges subdivision" id="subdivision" name="subdivision">
+                {% for subdivision in subdivisions -%}
+                  <option value="{{ subdivision[0] }}" 
+                    {% if privileges[0] == subdivision[0] %}selected{% endif %}>{{ subdivision[1] }}</option>
+                {%- endfor %}
+                </select>
+              </dd>
+            </div>
+            <div class="profile-settings-item">
+              <dt><div class="caption">{{ _('Application role') }}:</div></dt>
+              <dd>
+                <select class="popup privileges role" id="app_role" name="app_role">
+                {% for role in app_roles -%}
+                  <option value="{{ role[0] }}"
+                    {% if privileges[1] == role[0] %}selected{% endif %}>{{ role[1] }}</option>
+                {%- endfor %}
+                </select>
+              </dd>
+            </div>
+            <div class="profile-settings-item">
+              <dt><div class="caption">{{ _('Menu') }}:</div></dt>
+              <dd>
+                <select class="popup privileges app_menu" id="app_menu" name="app_menu">
+                {% for menu in app_menus -%}
+                  <option value="{{ menu }}"
+                    {% if privileges[1] == menu %}selected{% endif %}>{{ menu }}</option>
+                {%- endfor %}
+                </select>
+              </dd>
+            </div>
+            <div class="profile-settings-item">
+              <dt><div class="caption">{{ _('Default URL') }}:</div></dt>
+              <dd><input class="popup privileges base_url" id="base_url" name="base_url" type="text" value="{{ privileges[3] }}"></dd>
+            </div>
+            <h3>{{ _('Permissions') }}:</h3>
+            <div class="profile-settings-item">
+              <label for="app_is_manager">
+                <input class="options privileges" type="checkbox" id="app_is_manager" value="1" {% if privileges[4] %}checked{% endif %}>
+                <span>{{ _('Manager') }}</span></label>
+              <label for="app_is_consultant">
+                <input class="options privileges" type="checkbox" id="app_is_consultant" value="1" {% if privileges[6] %}checked{% endif %}>
+                <span>{{ _('Consultant') }}</span></label>
+              <label for="app_is_author">
+                <input class="options privileges" type="checkbox" id="app_is_author" value="1" {% if privileges[5] %}checked{% endif %}>
+                <span>{{ _('Author') }}</span></label>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block pagination_title %}{{ _('Total users') }}{% endblock %}
+
+{% block pagination_form %}
+
+    <input type="hidden" id="page" name="page" value="" />
+    <input type="hidden" name="q:subdivision_id" value="{{ args['subdivision'][1] }}" />
+    <input type="hidden" name="q:app_role_id" value="{{ args['app_role'][1] }}" />
+    <input type="hidden" name="q:role_id" value="{{ args['role'][1] }}" />
+    <input type="hidden" name="q:confirmed" value="{{ args['confirmed'][1] }}" />
+    <input type="hidden" name="q:enabled" value="{{ args['enabled'][1] }}" />
+    <input type="hidden" name="q:app_privilege" value="{{ args['app_privilege'][1] }}" />
+    <input type="hidden" id="searched" name="search" value="{{ search }}">
+
+{% endblock %}
+
+{% block filter %}
+
+  <div id="log-filter" class="admin-filter common-filter">
+    <div id="sidebar-filter-scroller">
+    <form action="{{ pagination['link'] }}" id="filter-form" method="POST" onSubmit="return $onFilterFormSubmit(this);">
+
+    <input type="hidden" name="page" value="{{ pagination['current_page'] }}">
+    <input type="hidden" name="per-page" value="{{ pagination['per_page'] }}">
+    <input type="hidden" id="user_id" name="user_id" value="{{ user[0] }}" />
+    <input type="hidden" id="command" name="command" value="" />
+    <input type="hidden" id="position" name="position" value="{{ pagination['position'] }}">
+    <input type="hidden" id="searched" name="search" value="{{ search }}">
+    <input type="hidden" id="reset_search" name="reset_search" value="0">
+    <input type="hidden" id="sort" name="sort" value="{{ pagination['sort']['current_sort'] }}">
+    <input type="hidden" id="sidebar" name="sidebar" value="{{ sidebar['state'] }}">
+    <input type="hidden" id="OK" name="OK" value="{{ OK }}">
+    <input type="hidden" name="default_confirmed" value="{{ args['confirmed'][1] }}" />
+    <input type="hidden" name="default_enabled" value="{{ args['enabled'][1] }}" />
+    <input type="hidden" id="command" name="command" value="">
+
+    <dt><div class="caption subdivision">{{ _('Company subdivision') }}:</div></dt>
+    <dd>
+        <select class="field popup" id="subdivision_id" name="q:subdivision_id" onchange="javascript:MakeFilterSubmit(0);">
+          {% for subdivision in subdivisions -%}
+            <option value="{{ subdivision[0] }}" {% if args['subdivision'][1] == subdivision[0] %}selected{% endif %}>{{ subdivision[1] }}</option>
+          {%- endfor %}
+        </select>
+    </dd>
+
+    <dt><div class="caption role">{{ _('Application role') }}:</div></dt>
+    <dd>
+        <select class="field popup" id="app_role_id" name="q:app_role_id" onchange="javascript:MakeFilterSubmit(1);">
+          {% for role in app_roles -%}
+            <option value="{{ role[0] }}" {% if args['app_role'][1] == role[0] %}selected{% endif %}>{{ role[1] }}</option>
+          {%- endfor %}
+        </select>
+    </dd>
+
+    <dt><div class="caption role">{{ _('Membership role') }}:</div></dt>
+    <dd>
+        <select class="field popup" id="role_id" name="q:role_id" onchange="javascript:MakeFilterSubmit(2);">
+          {% for role in roles -%}
+            <option value="{{ role[0] }}" {% if args['role'][1] == role[0] %}selected{% endif %}>{{ role[1] }}</option>
+          {%- endfor %}
+        </select>
+    </dd>
+
+    <dt><div class="caption confirmed">{{ _('Access confirmed') }}:</div></dt>
+    <dd>
+      <ul class="radiofilter" id="confirmed">
+        {% for confirmed in logical -%}
+        <li>
+          <div class="input">
+            <input {% if args['confirmed'][1] == confirmed[0] %}checked{% endif %} id="confirmed_{{ confirmed[0] }}" name="q:confirmed" type="radio" 
+             value="{{ confirmed[0] }}" onchange="javascript:MakeFilterSubmit(3);">
+          </div>
+          <div class="label"><label for="confirmed_{{ confirmed[0] }}">{{ _(confirmed[1]) }}</label></div>
+        </li>
+        {%- endfor %}
+      </ul>
+    </dd>
+
+    <dt><div class="caption enabled">{{ _('Access enabled') }}:</div></dt>
+    <dd>
+      <ul class="radiofilter" id="enabled">
+        {% for enabled in logical -%}
+        <li>
+          <div class="input">
+            <input {% if args['enabled'][1] == enabled[0] %}checked{% endif %} id="enabled_{{ enabled[0] }}" name="q:enabled" type="radio" 
+             value="{{ enabled[0] }}" onchange="javascript:MakeFilterSubmit(4);">
+          </div>
+          <div class="label"><label for="enabled_{{ enabled[0] }}">{{ _(enabled[1]) }}</label></div>
+        </li>
+        {%- endfor %}
+      </ul>
+    </dd>
+
+    <dt><div class="caption app_privilege">{{ _('Permissions') }}:</div></dt>
+    <dd>
+        <select class="field popup" id="app_privilege_id" name="q:app_privilege" onchange="javascript:MakeFilterSubmit(5);">
+          {% for app_privilege in app_privileges -%}
+            <option value="{{ app_privilege[0] }}" {% if args['app_privilege'][1] == app_privilege[0] %}selected{% endif %}>{{ _(app_privilege[1]) }}</option>
+          {%- endfor %}
+        </select>
+    </dd>
+
+    </form>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block control_panel %}
+
+  <div id="control-panel">
+
+  <div class="dropdown-container">
+
+  {% if current_user.is_anybody() %}
+    <div class="dropdown" id="admin-panel-container">
+      <a class="dropdown-link" id="admin-panel-dropdown">{{ _('Control panel') }}</a>
+      <div class="dropdown-content" id="admin-panel">
+        <button class="btn btn-primary last-btn" id="admin:message">{{ _('Information mail') }}</button>
+      </div>
+    </div>
+  {% endif %}
+
+  </div>
+  
+  </div>
+
+{% endblock %}
+
+{% block dialogs_content %}
+
+<div class="common-dialog" id="message-confirm-container" title="{{ _('Message confirmation form') }}" style="display:none;">
+  <h3 id="message-request">{{ _('You can email a message for the sellected addresses.') }}</h3>
+  <div class="common-confirmation">
+    <h4 id="message-caption">{{ _('Message confirmation rules see in the application documentation.') }}</h4>
+    <div class="common-box common-panel">
+      <div id="message-box">
+        <div class="order-item common-next">
+
+          {{ Items.input('subject', 'subject', 'text', '', 'caption', _('Subject'), '') }}
+
+        </div>
+        <div class="message-item common-next">
+
+          {{ Items.textarea('message', 'message', '', 'caption message', _('Message text'), 0, '') }}
+
+        </div>
+
+        <h4>{{ _('Options') }}:</h4>
+
+        <label for="item-everybody"><input type="checkbox" id="item-everybody" value="1" checked>
+          <span>{{ _('Sent message to everybody matched the filter') }}</span></label>
+
+        <label for="item-with-signature"><input type="checkbox" id="item-with-signature" value="1" checked>
+          <span>{{ _('Include signature of the author') }}</span></label>
+
+        <label for="item-with-greeting"><input type="checkbox" id="item-with-greeting" value="1" checked>
+          <span>{{ _('Include greeting to respondents') }}</span></label>
+
+        <label for="item-self-email"><input type="checkbox" id="item-self-email" value="1" checked>
+          <span>{{ _('Send message from self email') }}</span></label>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% endif %}

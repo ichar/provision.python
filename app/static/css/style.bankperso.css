@@ -1,0 +1,45 @@
+
+/*** BANKPERSO ***/
+
+body { overflow-y:inherit; }
+
+#page-container > .bankperso { display:block; margin-right:12px; }
+
+div.bankperso .view-container { width:100%; }
+
+/*** BankPerso Filter Items  ***/
+
+div.bankperso-filter #bank            { min-width:190px; }
+div.bankperso-filter #type            { width:398px; }
+div.bankperso-filter #status          { width:398px; }
+div.bankperso-filter #batchtype       { width:398px; }
+div.bankperso-filter #order-date-from { width:176px; }
+div.bankperso-filter #order-date-to   { width:176px; }
+div.bankperso-filter #ready-from      { width:176px; }
+div.bankperso-filter #ready-to        { width:176px; }
+div.bankperso-filter #state           { width:190px; }
+
+#line-table { border-spacing:5px; }
+
+/*** Change Date Area ***/
+
+.changedate-context { height:250px; }
+
+#changedate_box { 
+    display:block; 
+    border:1px solid black; 
+    margin:10px auto;
+    width:260px;
+}
+/*
+.pika-single.is-hidden { display: block !important; }
+*/
+
+/*** Change Address Area ***/
+
+#changeaddress-context { width:540px; }
+
+div.changeaddress-item { margin-left:10px; }
+div.changeaddress-item dd, div.changeaddress-item dt { display:inline-block; } 
+div.changeaddress-item dt { width:140px; }
+div.changeaddress-item input { margin:0px; }

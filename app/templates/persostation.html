@@ -1,0 +1,151 @@
+﻿{% extends "common.html" %}
+
+{% import 'forms.html' as Forms %}
+
+{% block starter %}
+
+<script src="{{ url_for('static', filename='js/db.controller.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/log.default.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/persostation.min.js') }}{{ vsc }}"></script>
+
+<script src="{{ url_for('static', filename='js/persostation.default.min.js') }}{{ vsc }}"></script>
+
+{% endblock %}
+
+{% block data_section_content %}
+
+  <div class="persostation inline-content">
+
+    {{ Forms.lines('persostation-actions', orders, config) }}
+
+  </div>
+
+{% endblock %}
+
+{% block info_section_content %}
+
+  <div class="data-menu block" id="tab-content">
+    <div class="menu selected" id="data-menu-batches">Партии</div>
+    <!-- Addon menu -->
+  </div>
+
+  <div class="persostation-container" id="info-container">
+    <div class="view-content" id="subline-content">
+      <div class="cell p50"><div id="subline-data">
+        <h3>Партии файла <span class="filename" id="subline_name">{{ current_file[1] }}</span>:</h3>
+
+        {{ Forms.sublines('persostation-batches', batches, config) }}
+
+      </div></div><div class="cell p50"><div id="info-data" style="display:none;">
+        <h3>Операторы ТЗ <span class="filename" id="ex_form">{{ current_file[2] }}</span>:</h3>
+        <div id="ex_printable_area">
+          <div class="view-container inline" id="EXFORM"></div>
+        </div>
+      </div>
+    </div></div>
+  </div>
+
+{% endblock %}
+
+{% block pagination_title %}Заказов / карт{% endblock %}
+
+{% block pagination_form %}
+
+    <input type="hidden" id="page" name="page" value="" />
+    <input type="hidden" id="order_id" name="order_id" value="{{ current_file[0] }}" />
+    <input type="hidden" name="bank" value="{{ args['bank'][1] }}" />
+    <input type="hidden" name="batchtype" value="{{ args['batchtype'][1] }}" />
+    <input type="hidden" name="date_from" value="{{ args['date_from'][1] }}" />
+    <input type="hidden" name="date_to" value="{{ args['date_to'][1] }}" />
+    <input type="hidden" id="searched" name="search" value="{{ search }}">
+
+{% endblock %}
+
+{% block filter %}
+
+  <div id="log-filter" class="persostation-filter common-filter">
+    <div id="sidebar-filter-scroller">
+    <form action="{{ pagination['link'] }}" id="filter-form" method="POST">
+    
+    <input type="hidden" name="page" value="{{ pagination['current_page'] }}">
+    <input type="hidden" name="per-page" value="{{ pagination['per_page'] }}">
+    <input type="hidden" id="order_id" name="order_id" value="{{ current_file[0] }}">
+    <input type="hidden" id="batch_id" name="batch_id" value="{{ current_file[2] }}">
+    <input type="hidden" id="searched" name="search" value="{{ search }}">
+    <input type="hidden" id="reset_search" name="reset_search" value="0">
+    <input type="hidden" id="sort" name="sort" value="{{ pagination['sort']['current_sort'] }}">
+    <input type="hidden" id="position" name="position" value="{{ pagination['position'] }}">
+    <input type="hidden" id="sidebar" name="sidebar" value="{{ sidebar['state'] }}">
+    <input type="hidden" id="errors" value="{{ errors }}">
+    <input type="hidden" id="OK" name="OK" value="{{ OK }}">
+    <input type="hidden" id="command" name="command" value="">
+
+    <dt><div class="caption bank">Клиент:</div></dt>
+    <dd>
+        <select class="field popup" id="bank" name="bank" onchange="javascript:MakeFilterSubmit(0);">
+          {% for bank in banks -%}
+            <option value="{{ bank[0] }}" {% if args['bank'][1] == bank[0] %}selected{% endif %}>{{ bank[1] }}</option>
+          {%- endfor %}
+        </select>
+    </dd>
+
+    <dt><div class="caption batchtype" id="batchtype-caption">Тип партии:</div></dt>
+    <dd>
+      <ul class="radiofilter" id="batchtype">
+        {% for batchtype in batchtypes -%}
+        <li>
+          <div class="input">
+            <input {% if args['batchtype'][1] == batchtype[0] %}checked{% endif %} id="batchtype_{{ batchtype[0] }}" name="batchtype" type="radio" 
+             value="{{ batchtype[0] }}" onchange="javascript:MakeFilterSubmit(1);">
+          </div>
+          <div class="label"><label for="batchtype_{{ batchtype[0] }}">{{ batchtype[1] }}</label></div>
+        </li>
+        {%- endfor %}
+      </ul>
+    </dd>
+
+    <dt><div class="caption operator">Оператор:</div></dt>
+    <dd>
+        <select class="field popup" id="operator" name="operator" onchange="javascript:MakeFilterSubmit(2);">
+          {% for operator in operators -%}
+            <option value="{{ operator[0] }}" {% if args['operator'][1] == operator[0] %}selected{% endif %}>{{ operator[1] }}</option>
+          {%- endfor %}
+        </select>
+    </dd>
+
+    <dt><div class="caption orderdate">Дата заказа c:</div></dt>
+    <dd>
+        <input class="field date" type="date" id="order-date-from" name="date_from" value="{{ args['date_from'][1] }}" onchange="javascript:MakeFilterSubmit(3);">
+    </dd>
+
+    <dt><div class="caption orderdate">по:</div></dt>
+    <dd>
+        <input class="field date" type="date" id="order-date-to" name="date_to" value="{{ args['date_to'][1] }}" onchange="javascript:MakeFilterSubmit(4);">
+    </dd>
+    
+    </form>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block control_panel %}
+
+  <div id="control-panel">
+
+  <div class="dropdown-container">
+    <div class="dropdown" id="services-container">
+      <a class="dropdown-link" id="services-dropdown">Отчеты</a>
+      <div class="dropdown-content" id="services">
+
+      </div>
+    </div>
+  </div>
+  
+  </div>
+
+{% endblock %}
+
+{% block dialogs_content %}
+
+{% endblock %}

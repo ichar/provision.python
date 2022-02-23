@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{# import "bootstrap/wtf.html" as wtf #}
+{% from 'templates.html' import render_persostation %}
+
+{% block starter %}
+
+<script src="{{ url_for('static', filename='js/persostation.default.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/persostation.js') }}{{ vsc }}"></script>
+
+<script type="text/javascript">
+
+var OKDisabled = '{{ disabled["ok"] }}';
+var CancelDisabled = '{{ disabled["cancel"] }}';
+var operator = '{{ operator }}';
+
+var is_search_focused = false;
+
+</script>
+
+{% endblock %}
+
+{% block page_content %}
+
+<div class="register">
+  <div class="operator"><span class="hello">Здравствуйте,</span><span class="username"> {{ current_user.full_name() }}!</span></div>
+  <hr>
+  {# wtf.quick_form(form) #}
+  <form action="{{ base }}" class="form" id="persostation" method="POST">
+  	<div style="display:none;"><input id="csrf_token" name="csrf_token" type="hidden" value="None"></div>
+  	<input id="active" name="active" type="hidden" value="">
+  	{{ render_persostation(form.date_from) }}
+  	{{ render_persostation(form.client) }}
+  	<div class="info-group">
+  	  <div><dt class="info-title">ClientID:</dt><dd class="info-value">{{ client['ClientID'] }}</dd></div>
+  	</div>
+  	{{ render_persostation(form.in_trigger, class_="x1") }}
+  	{{ render_persostation(form.order) }}
+  	<div class="info-group">
+  	  <div><dt class="info-title">FileID:</dt><dd class="info-value">{{ order['FileID'] }}</dd></div>
+  	  <div><dt class="info-title">Имя файла:</dt><dd class="info-value">
+        <a class="link" target="_blank" href="/bankperso?per_page=10&sidebar=0&_id={{ order['FileID'] }}">{{ order['FName'] }}</a></dd></div>
+  	  <div><dt class="info-title">Кол-во:</dt><dd class="info-value">{{ order['FQty'] }}</dd></div>
+  	</div>
+  	{{ render_persostation(form.batches, multiple=True) }}
+  	<div class="buttons disabled" id="buttons">
+  	  <input class="btn btn-default" id="ok" name="ok" type="submit" value="Добавить">
+  	  <input class="btn btn-default" id="cancel" name="cancel" type="submit" value="Отменить">
+  	</div>
+  </form>
+  <p>{{ _('Return to the Login page') }}: <a href="{{ url_for('auth.operator') }}">{{ _('Click here') }}</a>.</p>
+</div>
+
+{% endblock %}

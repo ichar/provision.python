@@ -1,0 +1,129 @@
+{% extends "simple.html" %}
+
+{% import 'items.html' as Items %}
+
+{% block styles %}
+
+<style type="text/css">
+
+::-webkit-scrollbar {
+    width: 10px !important;
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(200, 200, 200, 0.5) !important;
+}
+
+</style>
+
+{% endblock %}
+
+{% block starter %}
+
+<script src="{{ url_for('static', filename='js/db.controller.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/audit.dialogs.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/scroll.caption.min.js') }}{{ vsc }}"></script>
+
+<script src="{{ url_for('static', filename='js/audit.min.js') }}{{ vsc }}"></script>
+
+<script type="text/javascript">
+
+$AuditSelectorDialog.content_state = {{ content_state }};
+
+</script> 
+
+{% endblock %}
+
+{% block header %}
+
+{% include 'simple-header.html' %}
+
+{% endblock %}
+
+{% block page_content %}
+
+<div id="page-container">
+  <div class="caption-container" id="caption">
+    <input type="hidden" id="OK" name="OK" value="{{ OK }}">
+
+    <div class="history">
+      <div class="history-menu" id="history:menu" title="{{ _('Menu') }}">{{ _('Main menu') }}</div>
+      <div class="back" id="history:back" title="{{ _('Go back') }}"><<</div>
+      <div class="forward" id="history:forward" title="{{ _('Go forward') }}">>></div>
+    </div>
+
+    <div class="caption">{{ _('Finance Audit Page') }}</div>
+    <div class="caption-name">
+      <table border="0">
+      <tr>
+      <td><h1>{{ audit['rendered_title']|safe }}</h1></td>
+      <td>
+    {%- if page_menu -%}
+      <div class="caption-buttons">
+      {% for item in page_menu %}
+        <button class="btn btn-{{ item[3] }}" href="{{ item[2] }}" id="audit:{{ item[0] }}">{{ item[1] }}</button>
+      {% endfor %}
+      </div>
+    {%- endif -%}
+      </td></tr></table>
+    </div>
+
+    <div class="header">
+      <div class="address">
+        <div class="period">
+
+          {{ Items.date('created_after', 'created_after', '', audit['created_after'], 'caption created_after', _('Finance Period From'), 0, '') }}
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="view-container" id="line-content">
+  {%- set cols = columns|length -%}
+    <table class="view-data" border="1">
+    <tr class="line">
+  {%- for header in headers -%}
+      <td class="column header">{{ header|safe }}</td>
+  {%- endfor -%}
+    </tr>
+
+  {%- for key in keys -%}
+    {%- set node_id = data[key][2] -%}
+    <tr class="line {% if loop.last %}totalline{% endif %}" id="row-line:{{ node_id }}">
+      <td class="column title {{ styles['title'] }}">{{ data[key][3]|safe }}</td>
+      <td class="column value sum_price">{{ data[key][0] }}</td>
+    {% if cols > 3 %}
+      <td class="column value percents">{{ data[key][6]|safe }}</td>
+    {% endif %}
+    {% if loop.last %}
+      <td class="column">
+        <div class="total_orders">{{ data[key][2]|safe }}</div>
+      </td>
+    {% else %}
+      <td class="column ids">
+        <div class="expanded {{ states[0] }}" id="expanded:{{ node_id }}">{{ data[key][1]|safe }}</div>
+        <div class="collapsed {{ states[1] }}" id="collapsed:{{ node_id }}">
+          <div class="progress {{ data[key][7] }}" style="width:{{ data[key][5] }}" title="{{ data[key][8] }}"></div>
+          <div class="info">{{ data[key][4]|safe }}</div>
+        </div>
+      </td>
+    {% endif %}
+    </tr>
+  {%- endfor -%}
+
+    </table>
+  </div>
+
+  <div class="extralinks">
+    <span>Справочная информация:</span>
+    <a target="_blank" href="https://fincalculator.ru/kalendar">Производственный календарь</a>
+  </div>
+</div>
+
+<form action="" id="filter-form" method="POST"></form>
+
+{% endblock %}
+
+{% block dialogs_content %}
+
+{% endblock %}

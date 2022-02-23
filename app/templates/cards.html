@@ -1,0 +1,226 @@
+﻿{% extends "common.html" %}
+
+{% import 'forms.html' as Forms %}
+
+{% block page_styles %}
+
+<link href="{{ url_for('static', filename='css/style') }}.cards.css{{ vsc }}" rel="stylesheet" type="text/css">
+
+{% endblock %}
+
+{% block starter %}
+
+<script src="{{ url_for('static', filename='js/db.controller.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/log.default.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/cards.min.js') }}{{ vsc }}"></script>
+<script src="{{ url_for('static', filename='js/reports.min.js') }}{{ vsc }}"></script>
+
+<script src="{{ url_for('static', filename='js/bankperso.default.min.js') }}{{ vsc }}"></script>
+
+{% endblock %}
+
+{% block data_section_content %}
+
+  <div class="cards inline-content">
+
+    {{ Forms.lines('cards.batches', batches, config) }}
+
+    <div class="cards-selection" id="cards-selection-box">
+      <button class="btn btn-primary" id="CARDS_ACTIVATION">Активировать</button>
+      <select id="selected-batches" multiple></select>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block info_section_content %}
+
+  <div class="data-menu block" id="tab-content">
+    <div class="menu selected" id="data-menu-opers">Операции</div>
+    <!-- Addon menu -->
+    <div class="menu" id="data-menu-logs">История партии</div>
+    <div class="menu" id="data-menu-units">ПК</div>
+    <div class="menu" id="data-menu-params">Параметры</div>
+  </div>
+
+  <div class="cards-container" id="info-container">
+    <div class="view-content" id="subline-content">
+      <div class="cell p50"><div id="subline-data">
+        <h3>Операции ТЗ <span class="filename" id="subline_name">{{ current_file[1] }}</span>:</h3>
+
+        {{ Forms.sublines('cards.pers-batch-opers', opers, config) }}
+
+      </div></div>
+      <div class="cell p50 exdata"></div>
+    </div>
+    
+    <div class="view-content tab" id="logs-content" style="display:none;">
+      <h3>История партии (хронология смены статусов) <span class="filename">{{ current_file[1] }}</span>:</h3>
+      <div class="view-container view-lines" id="logs-container"></div> <!-- {{ view_class }} -->
+    </div>
+
+    <div class="view-content tab" id="units-content" style="display:none;">
+      <h3>Лист персонализации партии <span class="filename">{{ current_file[1] }}</span>:</h3>
+      <div class="view-container view-lines" id="units-container"></div> <!-- {{ view_class }} -->
+    </div>
+
+    <div class="view-content tab" id="params-content" style="display:none;">
+      <h3>Параметры партии <span class="filename">{{ current_file[1] }}</span>:</h3>
+      <div class="view-container view-lines" id="params-container"></div> <!-- {{ view_class }} -->
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block pagination_title %}Партий / карт{% endblock %}
+
+{% block pagination_form %}
+
+    <input type="hidden" id="page" name="page" value="" />
+    <input type="hidden" id="pers_id" name="pers_id" value="{{ current_file[0] }}" />
+    <input type="hidden" name="client" value="{{ args['client'][1] }}" />
+    <input type="hidden" name="filename" value="{{ args['filename'][1] }}" />
+    <input type="hidden" name="status" value="{{ args['status'][1] }}" />
+    <input type="hidden" name="persstatus" value="{{ args['persstatus'][1] }}" />
+    <input type="hidden" name="perstype" value="{{ args['perstype'][1] }}" />
+    <input type="hidden" name="date_from" value="{{ args['date_from'][1] }}" />
+    <input type="hidden" name="date_to" value="{{ args['date_to'][1] }}" />
+    <input type="hidden" name="state" value="{{ args['state'][1] }}" />
+    <input type="hidden" name="pan" value="{{ args['pan'][1] }}" />
+    <input type="hidden" id="searched" name="search" value="{{ search }}">
+
+{% endblock %}
+
+{% block filter %}
+
+  <div id="log-filter" class="cards-filter common-filter">
+    <div id="sidebar-filter-scroller">
+    <form action="{{ pagination['link'] }}" id="filter-form" method="POST">
+    
+    <input type="hidden" name="page" value="{{ pagination['current_page'] }}">
+    <input type="hidden" name="per-page" value="{{ pagination['per_page'] }}">
+    <input type="hidden" id="pers_id" name="pers_id" value="{{ current_file[0] }}">
+    <input type="hidden" id="oper_id" name="oper_id" value="{{ current_file[2] }}">
+    <input type="hidden" id="selected_pers_ids" name="selected_pers_ids" value="">
+    <input type="hidden" id="searched" name="search" value="{{ search }}">
+    <input type="hidden" id="reset_search" name="reset_search" value="0">
+    <input type="hidden" id="sort" name="sort" value="{{ pagination['sort']['current_sort'] }}">
+    <input type="hidden" id="position" name="position" value="{{ pagination['position'] }}">
+    <input type="hidden" id="sidebar" name="sidebar" value="{{ sidebar['state'] }}">
+    <input type="hidden" id="errors" value="{{ errors }}">
+    <input type="hidden" id="OK" name="OK" value="{{ OK }}">
+    <input type="hidden" id="command" name="command" value="">
+    {% if 'extra' in pagination %}<input type="hidden" name="__" value="1">{% endif %}
+
+    <dt><div class="caption client">Клиент:</div></dt>
+    <dd>
+        <select class="field popup" id="client" name="client" onchange="javascript:MakeFilterSubmit(0);">
+          {% for client in clients -%}
+            <option value="{{ client }}" {% if args['client'][1] == client %}selected{% endif %}>{{ client }}</option>
+          {%- endfor %}
+        </select>
+    </dd>
+{#
+    <dt><div class="caption filename">Маска файла:</div></dt>
+    <dd>
+        <select class="field popup" id="filename" name="filename" onchange="javascript:MakeFilterSubmit(1);">
+          {% for filename in filenames -%}
+            <option value="{{ filename }}" {% if args['filename'][1] == filename %}selected{% endif %}>{{ filename }}</option>
+          {%- endfor %}
+        </select>
+    </dd>
+#}
+    <dt><div class="caption persstatus" id="persstatus-caption">Статус партии:</div></dt>
+    <dd>
+        <select class="field popup" id="persstatus" name="persstatus" onchange="javascript:MakeFilterSubmit(3);">
+          {% for persstatus in persstatuses -%}
+            <option value="{{ persstatus }}" {% if args['persstatus'][1] == persstatus %}selected{% endif %}>{{ persstatus }}</option>
+          {%- endfor %}
+        </select>
+    </dd>
+
+    <dt><div class="caption status" id="status-caption">Статус ТЗ:</div></dt>
+    <dd>
+        <select class="field popup" id="status" name="status" onchange="javascript:MakeFilterSubmit(2);">
+          {% for status in statuses -%}
+            <option value="{{ status[0] }}" {% if args['status'][1] == status[0] %}selected{% endif %}>{{ status[1] }}</option>
+          {%- endfor %}
+        </select>
+    </dd>
+
+    <dt><div class="caption orderdate">Дата заказа c:</div></dt>
+    <dd>
+        <input class="field date" type="date" id="order-date-from" name="date_from" value="{{ args['date_from'][1] }}" onchange="javascript:MakeFilterSubmit(4);">
+    </dd>
+
+    <dt><div class="caption orderdate">по:</div></dt>
+    <dd>
+        <input class="field date" type="date" id="order-date-to" name="date_to" value="{{ args['date_to'][1] }}" onchange="javascript:MakeFilterSubmit(5);">
+    </dd>
+{#
+    <dt><div class="caption state">Условие отбора:</div></dt>
+    <dd>
+        <select class="field popup" id="state" name="state" onchange="javascript:MakeFilterSubmit(7);">
+          {% for state in states -%}
+            <option value="{{ state[0] }}" {% if args['state'][1] == state[0] %}selected{% endif %}>{{ state[1] }}</option>
+          {%- endfor %}
+        </select>
+    </dd>
+#}
+    <dt><div class="caption perstype" id="perstype-caption">Тип партии:</div></dt>
+    <dd>
+        <select class="field popup" id="perstype" name="perstype" onchange="javascript:MakeFilterSubmit(4);">
+          {% for perstype in perstypes -%}
+            <option value="{{ perstype[0] }}" {% if args['perstype'][1] == perstype[0] %}selected{% endif %}>{{ perstype[1] }}</option>
+          {%- endfor %}
+        </select>
+    </dd>
+
+    <dt><div class="caption pan">PAN/BIN:</div></dt>
+    <dd>
+        <input class="field" type="text" id="pan" name="pan" value="{{ args['pan'][1] }}" title="{{ _('Search PAN/BIN') }}" 
+         onchange="javascript:MakeFilterSubmit(5);">
+    </dd>
+    </form>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block control_panel %}
+
+  <div id="control-panel">
+
+  <div class="dropdown-container">
+    <div class="dropdown" id="admin-panel-container">
+      <a class="dropdown-link" id="admin-panel-dropdown">Панель управления</a>
+      <div class="dropdown-content" id="admin-panel">
+
+      {% if current_user.is_operator() %}
+        <button class="btn btn-success" id="admin:activate">Активировать партии файла</button>
+        <button class="btn btn-danger last-btn" id="admin:reject">Отменить активацию</button>
+      {% endif %}
+      </div>
+    </div>
+    
+    <div class="dropdown" id="services-container">
+      <a class="dropdown-link" id="services-dropdown">Отчеты</a>
+      <div class="dropdown-content" id="services">
+        <button class="btn btn-primary" id="service:cards-r1">Заявка на выдачу заготовок</button>
+        <button class="btn btn-primary" id="service:cards-r2">Задание на персонализацию карт</button>
+        <button class="btn btn-primary" id="service:cards-r5">Протокол проверки карт</button>
+        <button class="btn btn-primary" id="service:cards-r4">Общее задание на печать листовок</button>
+        <div class="line"><hr /></div>
+        <button class="btn btn-primary last-btn" id="service:cards-r3">Протокол проверки карточной продукции "МИР"</button>
+      </div>
+    </div>
+  </div>
+
+  </div>
+
+{% endblock %}
+
+{% block dialogs_content %}
+
+{% endblock %}
+

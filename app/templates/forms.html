@@ -1,0 +1,170 @@
+{% from 'templates.html' import render_field, render_navigation_item, render_navigation_link %}
+
+{% macro form(name, group, data, config, root) -%}
+
+{%- if name=='register' -%}
+
+<form action="register" id="register-form" method="POST" onSubmit="return $onRegisterFormSubmit(this);">
+
+  <dl>
+    {{ render_field(data.username) }}
+    {{ render_field(data.email) }}
+    {{ render_field(data.password) }}
+    {{ render_field(data.confirm) }}
+    {{ render_field(data.accept_tos) }}
+  </dl>
+  <p><input type="submit" value="Register">
+
+</form>
+
+{%- elif name=='admin' -%}
+
+  {%- if group=='user' -%}
+
+  <dl>
+    {{ render_field(data.login) }}
+    {{ render_field(data.password) }}
+    {{ render_field(data.family_name) }}
+    {{ render_field(data.first_name) }}
+    {{ render_field(data.last_name) }}
+    {{ render_field(data.post) }}
+    {{ render_field(data.email) }}
+    {{ render_field(data.role) }}
+    {{ render_field(data.confirmed) }}
+    {{ render_field(data.enabled) }}
+  </dl>
+
+  {%- endif -%}
+
+{%- elif name=='navigation' -%}
+
+  {%- if group=='home' -%}
+
+  <ul>
+    {%- for item in data %}
+      {{ render_navigation_item(item) }} {% if not loop.last %} <span class="separator">&nbsp;</span> {% endif %}
+    {%- endfor %}
+  </ul>
+
+  {%- endif -%}
+
+{%- elif name=='default' -%}
+
+  {%- if group=='home' -%}
+
+  <div class="navigation">
+    {%- for item in data %}
+      {{ render_navigation_link(item) }}
+    {%- endfor %}
+  </div>
+
+  {%- endif -%}
+
+{%- endif -%}
+
+{%- endmacro %}
+
+{% macro lines(group, data, config) -%}
+
+  <div class="view-container" id="line-content">
+    <table class="view-data boxShadow1 {{ group }}" id="line-table" border="1">
+    <thead>
+    <tr>
+    {%- for column in config[group]['columns'] -%}
+      <td class="column header">{{ config[group]['headers'][column][0]|safe }}</td>
+    {%- endfor -%}
+    </tr>
+    </thead>
+
+    {% for row in data -%}
+    <tr class="line {{ loop.cycle('odd', 'even') }} {{ row['selected'] }}" id="row-line:{{ row['id'] }}:{{ loop.index }}">
+      {%- for column in config[group]['columns'] -%}
+        {% if row['Error'] %}
+      <td class="column error">{{ row[column]|safe }}</td>
+        {% elif row['Confirm'] %}
+      <td class="column confirm">{{ row[column]|safe }}</td>
+        {% elif row['Ready'] %}
+      <td class="column ready">{{ row[column]|safe }}</td>
+        {% elif row['Stop'] %}
+      <td class="column stop">{{ row[column]|safe }}</td>
+        {% elif row['Wait'] %}
+      <td class="column wait">{{ row[column]|safe }}</td>
+        {% elif row['Archive'] %}
+      <td class="column archive">{{ row[column]|safe }}</td>
+        {% else %}
+      <td class="column {{ config[group]['headers'][column][1] }}">{{ row[column]|safe }}</td>
+        {% endif %}
+      {%- endfor -%}
+    </tr>
+    {%- endfor %}
+    {%- if not data -%}
+    <tr><td colspan="{{ config[group]['columns']|length }}"><div class="nodata">{{ _('No data') }}</div></td></tr>
+    {%- endif -%}
+    </table>
+  </div>
+
+{%- endmacro %}
+
+{% macro sublines(group, data, config) -%}
+
+  <div class="view-container inline p100" id="MAINDATA"> <!-- {{ view_class }} -->
+    <table class="view-data p100" border="1">
+    <thead>
+    <tr>
+    {%- for column in config[group]['columns'] -%}
+      <td class="column header {{ column }}">{{ config[group]['headers'][column] }}</td>
+    {%- endfor -%}
+    </tr>
+    </thead>
+
+    {% for row in data -%}
+    <tr class="subline {{ loop.cycle('odd', 'even') }} {{ row['selected'] }}" id="row-subline:{{ row['id'] }}:{{ loop.index }}">
+      {%- for column in config[group]['columns'] -%}
+        {%- set css = 'log-' + column.lower() -%}
+        {% if row['Found'] and column in ('TZ',) %}
+      <td class="column {{ css }} found">{{ row[column]|safe }}</td>
+        {% elif row['Ready'] %}
+      <td class="column {{ css }} ready">{{ row[column]|safe }}</td>
+        {% elif row['Error'] %}
+      <td class="column {{ css }} error">{{ row[column]|safe }}</td>
+        {% else %}
+      <td class="column {{ css }}">{{ row[column]|safe }}</td>
+        {% endif %}
+      {%- endfor -%}
+    </tr>
+    {%- endfor %}
+    {%- if not data -%}
+    <tr id="subline-no-data"><td colspan="{{ config[group]['columns']|length }}"><div class="nodata">{{ _('No data') }}</div></td></tr>
+    {%- endif -%}
+    </table>
+    {# if data #}
+    <div class="row-counting">{{ _('Total records') }}: <span id="tab-rows-total">{{ data|length }}</span></div>
+    {# endif #}
+  </div>
+
+{%- endmacro %}
+
+{% macro commands(base) -%}
+
+  <div id="menu-commands">
+    <form action="{{ base }}" id="init-form" method="POST">
+      <input type="hidden" name="sidebar" value="">
+    </form>
+
+    <button class="btn btn-success" id="refresh">{{ _('Refresh') }}</button>
+    <button class="btn btn-warning" id="init-filter">{{ _('Clean & Reset query') }}</button>
+    <button class="btn btn-primary" id="export">{{ _('Export view data') }}</button>
+  </div>
+
+{%- endmacro %}
+
+{% macro search(root, search_context) -%}
+
+  <div class="block" id="search-box">
+    <form action="search" id="search-form" onSubmit="return false;">
+      <input class="string" id="search-context" type="text" value="{{ search_context }}" title="{{ _('Search by context') }}" placeholder="{{ _('Search context...') }}">
+      <img id="search-icon" src="{{ root }}static/img/db-search.png" title="{{ _('Search') }}" alt="">
+    </form>
+  </div>
+
+{%- endmacro %}

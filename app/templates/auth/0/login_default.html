@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block styles %}
+
+  {%- if is_mobile -%}
+
+<link href="{{ url_for('static', filename='css/style') }}.login.mobile.css{{ vsc }}" rel="stylesheet" type="text/css">
+
+  {%- else -%}
+
+<link href="{{ url_for('static', filename='css/style') }}.login.css{{ vsc }}" rel="stylesheet" type="text/css">
+
+  {%- endif -%}
+
+  {%- if is_explorer -%}
+
+<link href="{{ url_for('static', filename='css/style') }}.login.ie.css{{ vsc }}" rel="stylesheet" type="text/css">
+
+  {%- endif -%}
+
+{% endblock %}
+
+{% block starter %}
+
+<script src="{{ url_for('static', filename='js/login.js') }}{{ vsc }}"></script>
+
+{% endblock %}
+
+{% block title %}WebBankPerso Login{% endblock %}
+
+{% block page_content %}
+
+<div class="login">
+  {{ wtf.quick_form(form) }}
+  <br>
+  <p>{{ _('Do you wish to change password?') }} <a href="{{ url_for('auth.change_password') }}">{{ _('Click here') }}</a>.</p>
+</div>
+
+{% endblock %}
